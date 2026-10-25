@@ -2,18 +2,29 @@
 
 Офлайн-лаунчер Minecraft для Windows: сам скачивает нужную версию, библиотеки, ресурсы и Java, а запускает игру по обычному нику — без аккаунта Mojang/Microsoft.
 
-[Сайт лаунчера](https://stabrovskija8-boop.github.io/mine-launcher/) · [Скачать для Windows](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.0.0-win64.zip) · [Репозиторий](https://github.com/stabrovskija8-boop/mine-launcher)
+[Сайт лаунчера](https://stabrovskija8-boop.github.io/mine-launcher/) · [Установщик](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.0.0.exe) · [Portable-архив](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.0.0-win64.zip) · [Репозиторий](https://github.com/stabrovskija8-boop/mine-launcher)
 
 ![MINE Launcher](docs/assets/launcher.png)
 
+## Скачать
+
+| Файл | Размер | Что это |
+| --- | --- | --- |
+| `MINE-Launcher-Setup-1.0.0.exe` | ~103 МБ | Установщик: ярлыки в «Пуск» и на рабочем столе, удаление через «Приложения». Права администратора не нужны. |
+| `MINE-Launcher-1.0.0-win64.zip` | ~140 МБ | Portable: распаковать в любую папку и запустить `MINE Launcher.exe`. |
+
+SHA-256 установщика: `c3f842c4753a81bbfc9b80e49f2acefed44363af88034cdbbb12ccdacf5eda39`
+
+Сборка не подписана, поэтому SmartScreen может предупредить: «Подробнее» → «Выполнить в любом случае».
+
 ## Быстрый старт
 
-1. Дважды кликните **`Запустить лаунчер.bat`**.
+1. Запустите установщик (или распакуйте portable-архив) и откройте **MINE Launcher**.
 2. Введите ник (латиница, цифры, `_`, 2–16 символов) — это имя игрока в офлайн-режиме.
 3. Выберите версию в списке (например, `26.3`) и нажмите **«Играть»**.
 4. Первый запуск — самый долгий: лаунчер скачает Java (~58 МБ), клиент, библиотеки и ресурсы (в сумме ~600 МБ для 26.3). Дальше запуск занимает секунды, всё уже лежит на диске.
 
-Если Electron ещё не установлен, `.bat` сам выполнит `npm install` (нужен [Node.js](https://nodejs.org)).
+Запуск из исходников: дважды кликните **`Запустить лаунчер.bat`** — если Electron ещё не установлен, `.bat` сам выполнит `npm install` (нужен [Node.js](https://nodejs.org)).
 
 Запуск с консолью (видно ошибки): `Запустить лаунчер.bat --console`
 Запуск из терминала: `npm start`
@@ -55,3 +66,13 @@
 - Скорость скачивания зависит от соединения с серверами Mojang/Azul; при обрыве загрузка повторяется автоматически.
 - Forge/NeoForge/OptiFine устанавливаются официальными установщиками: для Forge и NeoForge загрузка библиотек идёт внутри установщика, для OptiFine нужно нажать «Install» в его окне.
 - Для OptiFine установщик `.jar` нужно предварительно скачать с [optifine.net](https://optifine.net/downloads) — лаунчер поможет выбрать файл.
+
+## Сборка установщика
+
+Готовый установщик лежит в релизе. Пересобрать его можно [Inno Setup 6](https://jrsoftware.org/isinfo.php):
+
+```powershell
+& "$env:LOCALAPPDATA\InnoSetup6\ISCC.exe" build\setup.iss
+```
+
+На выходе — `dist\MINE-Launcher-Setup-1.0.0.exe`. Скрипт `build/setup.iss` берёт файлы из `dist\MINE Launcher`, а `build/icon.ico` и `build/wizard.png` — иконку приложения и картинку мастера установки.

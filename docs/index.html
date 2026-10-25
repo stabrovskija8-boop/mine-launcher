@@ -38,6 +38,7 @@
         <nav class="nav" id="nav">
           <a href="#features">Возможности</a>
           <a href="#screens">Скриншоты</a>
+          <a href="#video">Видео</a>
           <a href="#install">Установка</a>
           <a href="#faq">Вопросы</a>
           <a class="nav-github" href="https://github.com/stabrovskija8-boop/mine-launcher" target="_blank" rel="noopener">
@@ -63,19 +64,19 @@
             Ни Microsoft-аккаунта, ни паролей, ни лишних движений.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" id="downloadLink" href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.0.0-win64.zip">
+            <a class="btn btn-primary" id="downloadLink" href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.0.0.exe">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d="M12 3v11.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4L10 14.2V3h2ZM5 19h14v2H5v-2Z" />
               </svg>
-              Скачать для Windows
+              Скачать установщик
             </a>
-            <a class="btn btn-ghost" href="#features">Что внутри</a>
+            <a class="btn btn-ghost" href="#video">Смотреть видео</a>
           </div>
           <ul class="hero-badges">
             <li>922 версии</li>
             <li>5 загрузчиков</li>
             <li>Java автоматически</li>
-            <li>146 МБ</li>
+            <li>103 МБ</li>
           </ul>
         </div>
 
@@ -192,6 +193,59 @@
         </div>
       </section>
 
+      <section class="section container" id="video">
+        <div class="section-head">
+          <p class="eyebrow">Видео</p>
+          <h2>Как это работает</h2>
+          <p class="section-sub">Полминуты: ник, версия, «Скачать и играть» — и ты в игре.</p>
+        </div>
+
+        <figure class="video-card reveal">
+          <div class="video-frame" id="videoFrame">
+            <video
+              id="demoVideo"
+              src="assets/demo.mp4"
+              poster="assets/demo-poster.jpg"
+              width="1280"
+              height="720"
+              muted
+              loop
+              playsinline
+              preload="metadata"
+            ></video>
+
+            <button class="video-toggle" id="videoToggle" type="button" aria-label="Пауза">
+              <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M8 5v14l11-7z" />
+              </svg>
+              <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M7 5h4v14H7zM13 5h4v14h-4z" />
+              </svg>
+            </button>
+
+            <div class="video-bar">
+              <div
+                class="video-progress"
+                id="videoProgress"
+                role="slider"
+                tabindex="0"
+                aria-label="Перемотка видео"
+                aria-valuemin="0"
+                aria-valuemax="32"
+                aria-valuenow="0"
+              >
+                <span id="videoBar"></span>
+              </div>
+              <span class="video-time" id="videoTime">0:00</span>
+              <span class="video-note">без звука</span>
+            </div>
+          </div>
+          <figcaption>
+            1 — ник без аккаунта · 2 — выбор версии · 3 — «Скачать и играть» · 4 — игра запущена
+          </figcaption>
+        </figure>
+      </section>
+
       <section class="section container" id="install">
         <div class="section-head">
           <p class="eyebrow">Установка</p>
@@ -201,13 +255,13 @@
         <ol class="steps">
           <li class="reveal">
             <span class="step-num">01</span>
-            <h3>Скачай и распакуй</h3>
-            <p>Загрузи архив с GitHub Releases и распакуй его в любую папку. Установка не нужна.</p>
+            <h3>Скачай установщик</h3>
+            <p>Файл <code>MINE-Launcher-Setup-1.0.0.exe</code> (~103 МБ) с GitHub Releases. Права администратора не нужны.</p>
           </li>
           <li class="reveal">
             <span class="step-num">02</span>
-            <h3>Запусти лаунчер</h3>
-            <p>Открой <code>MINE Launcher.exe</code> (или «Запустить лаунчер.bat» из исходников).</p>
+            <h3>Установи</h3>
+            <p>Запусти файл и следуй мастеру. Ярлык появится в «Пуск» и на рабочем столе.</p>
           </li>
           <li class="reveal">
             <span class="step-num">03</span>
@@ -220,6 +274,12 @@
           <strong>Требования:</strong> Windows 10/11 (64-bit), ~2 ГБ на диске для игры и Java,
           интернет — только для первой загрузки. Данные хранятся в
           <code>%APPDATA%\MINE Launcher</code>, игра — в <code>%APPDATA%\.minecraft</code>.
+        </div>
+
+        <div class="note note-alt">
+          <strong>Не хочешь установщик?</strong> Есть portable-архив: распакуй в любую папку и запусти
+          <code>MINE Launcher.exe</code>. Скачать:
+          <a href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.0.0-win64.zip">MINE-Launcher-1.0.0-win64.zip</a> (~146 МБ).
         </div>
       </section>
 
@@ -249,6 +309,14 @@
           <details class="reveal">
             <summary>Это безопасно?</summary>
             <p>Лаунчер не запрашивает пароли и не отправляет ник на сторонние серверы. Файлы игры и Java загружаются с официальных адресов Mojang и Azul/Adoptium. Исходный код открыт.</p>
+          </details>
+          <details class="reveal">
+            <summary>Windows предупреждает, что приложение не подписано</summary>
+            <p>Сборка не куплена у центра сертификации, поэтому SmartScreen показывает «Windows protected your PC». Нажми «Подробнее» → «Выполнить в любом случае». Код открыт, установщик собран из этих же исходников.</p>
+          </details>
+          <details class="reveal">
+            <summary>Как удалить лаунчер?</summary>
+            <p>«Параметры» → «Приложения» → MINE Launcher → «Удалить», либо ярлык «Удалить MINE Launcher» в меню «Пуск». Конфиг и папка игры в <code>%APPDATA%</code> остаются — удали их вручную, если не нужны.</p>
           </details>
         </div>
       </section>

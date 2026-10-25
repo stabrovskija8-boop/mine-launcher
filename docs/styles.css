@@ -737,6 +737,163 @@ details p {
   font-size: 12.5px;
 }
 
+/* Видео */
+.video-card {
+  margin: 0;
+}
+
+.video-frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: #050908;
+  box-shadow: var(--shadow);
+  isolation: isolate;
+}
+
+.video-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(93, 245, 139, 0.07), transparent 62%);
+  pointer-events: none;
+}
+
+.video-frame video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #050908;
+}
+
+.video-toggle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  margin: -39px 0 0 -39px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(93, 245, 139, 0.93);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45), 0 0 0 10px rgba(93, 245, 139, 0.1);
+  color: #04120a;
+  cursor: pointer;
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+}
+
+.video-toggle:hover {
+  background: #7dffa5;
+}
+
+.video-toggle svg {
+  width: 30px;
+  height: 30px;
+}
+
+.video-toggle .ico-play {
+  display: none;
+}
+
+.video-frame.paused .video-toggle .ico-play {
+  display: block;
+}
+
+.video-frame.paused .video-toggle .ico-pause {
+  display: none;
+}
+
+.video-frame:not(.paused) .video-toggle {
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.video-frame:not(.paused):hover .video-toggle,
+.video-frame:not(.paused) .video-toggle:focus-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.video-bar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 16px 12px;
+  background: linear-gradient(to top, rgba(4, 9, 7, 0.92), rgba(4, 9, 7, 0.3) 58%, transparent);
+}
+
+.video-progress {
+  position: relative;
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(233, 244, 238, 0.18);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.video-progress::before {
+  content: '';
+  position: absolute;
+  inset: -9px 0;
+}
+
+.video-progress:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 5px;
+}
+
+.video-progress span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green-deep), var(--green));
+}
+
+.video-time {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.video-note {
+  color: var(--muted);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+.video-card figcaption {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 13.5px;
+  text-align: center;
+}
+
+.note-alt {
+  border-left-color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.note a {
+  color: var(--green-soft);
+}
+
 /* Анимация появления */
 .reveal {
   opacity: 0;
@@ -855,6 +1012,25 @@ details p {
 
   .site-footer {
     margin-top: 74px;
+  }
+
+  .video-toggle {
+    width: 60px;
+    height: 60px;
+    margin: -30px 0 0 -30px;
+  }
+
+  .video-toggle svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .video-note {
+    display: none;
+  }
+
+  .video-bar {
+    padding: 22px 12px 10px;
   }
 }
 

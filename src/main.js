@@ -32,6 +32,11 @@ app.setName('MINE Launcher');
 app.setPath('userData', path.join(app.getPath('appData'), 'MINE Launcher'));
 app.setAppUserModelId('ru.mine.launcher');
 
+const APP_ICON = (() => {
+  const file = path.join(__dirname, '..', 'build', 'icon.ico');
+  return fs.existsSync(file) ? file : undefined;
+})();
+
 const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) {
   app.quit();
@@ -96,6 +101,7 @@ function createWindow() {
     show: false,
     backgroundColor: '#0a0d10',
     title: 'MINE Launcher',
+    icon: APP_ICON,
     titleBarStyle: process.platform === 'win32' ? 'hidden' : 'default',
     titleBarOverlay:
       process.platform === 'win32'
