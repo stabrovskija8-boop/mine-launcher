@@ -2,7 +2,7 @@
 
 Офлайн-лаунчер Minecraft для Windows: сам скачивает нужную версию, библиотеки, ресурсы и Java, а запускает игру по обычному нику — без аккаунта Mojang/Microsoft.
 
-[Сайт лаунчера](https://stabrovskija8-boop.github.io/mine-launcher/) · [Репозиторий](https://github.com/stabrovskija8-boop/mine-launcher)
+[Сайт лаунчера](https://stabrovskija8-boop.github.io/mine-launcher/) · [Скачать для Windows](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.0.0-win64.zip) · [Репозиторий](https://github.com/stabrovskija8-boop/mine-launcher)
 
 ![MINE Launcher](docs/assets/launcher.png)
 
