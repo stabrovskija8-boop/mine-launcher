@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none';"
+  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MINE Launcher</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient"></div>
+  <div class="app">
+    <header class="titlebar">
+      <div class="brand">
+        <svg class="brand-cube" viewBox="0 0 44 44" aria-hidden="true">
+          <defs>
+            <linearGradient id="cubeTop" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#88f0a3" />
+              <stop offset="1" stop-color="#43c96b" />
+            </linearGradient>
+            <linearGradient id="cubeLeft" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#9a6738" />
+              <stop offset="1" stop-color="#6f4626" />
+            </linearGradient>
+            <linearGradient id="cubeRight" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#5e3b20" />
+              <stop offset="1" stop-color="#422813" />
+            </linearGradient>
+          </defs>
+          <path d="M22 4 40 14 22 24 4 14Z" fill="url(#cubeTop)" />
+          <path d="M4 14 22 24 22 40 4 30Z" fill="url(#cubeLeft)" />
+          <path d="M40 14 22 24 22 40 40 30Z" fill="url(#cubeRight)" />
+          <path d="M10 15.5 15 18.4 15 22.2 10 19.3Z" fill="#7ce095" opacity=".8" />
+          <path d="M26 27.5 32 31 32 33.4 26 29.9Z" fill="#a77843" opacity=".65" />
+          <path d="M26 32.8 30 35.2 30 36.8 26 34.4Z" fill="#8b5d33" opacity=".6" />
+          <path d="M22 24 22 40" stroke="#2b1a0d" stroke-opacity=".3" />
+        </svg>
+        <div class="brand-text">
+          <span class="brand-main">MINE</span>
+          <span class="brand-sub">LAUNCHER</span>
+        </div>
+        <span class="brand-badge">OFFLINE</span>
+      </div>
+
+      <div class="titlebar-drag"></div>
+
+      <div class="connection-pill" id="connectionPill" title="Статус серверов Mojang">
+        <span class="connection-dot" id="connectionDot"></span>
+        <span id="connectionText">Подключение…</span>
+        <button class="connection-refresh" id="refreshButton" title="Обновить список версий" aria-label="Обновить список версий">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0-14.9-4M4 13a8.1 8.1 0 0 0 14.9 4" /><path d="M4 4v5h5M20 20v-5h-5" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <button class="profile-card" data-open-settings type="button" title="Изменить профиль">
+          <canvas class="avatar avatar-lg" id="profileAvatar" width="8" height="8" aria-hidden="true"></canvas>
+          <span class="profile-meta">
+            <span class="profile-name" id="profileName">Steve</span>
+            <span class="profile-mode"><span class="dot dot-green"></span>Офлайн-профиль</span>
+          </span>
+          <svg class="profile-edit" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16v4Z" /><path d="m13.5 6.5 4 4" /></svg>
+        </button>
+
+        <nav class="nav">
+          <button class="nav-item active" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>
+            Библиотека
+            <span class="nav-count" id="versionCount">0</span>
+          </button>
+          <button class="nav-item" type="button" id="navLoaders">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v10l8 4 8-4V7Z" /><path d="M4 7l8 4 8-4M12 11v10" /></svg>
+            Модификации
+          </button>
+          <button class="nav-item" type="button" id="navSkin">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4" /><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" /><path d="M4 4h3M4 4v3M20 4h-3M20 4v3" /></svg>
+            Скин
+          </button>
+          <button class="nav-item" type="button" data-open-settings>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.56V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.56 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z" /></svg>
+            Настройки
+          </button>
+          <button class="nav-item" type="button" id="navFolder">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" /></svg>
+            Папка игры
+          </button>
+        </nav>
+
+        <div class="sidebar-spacer"></div>
+
+        <div class="java-card" id="javaCard">
+          <div class="java-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18c-1.8.6-4 .6-4 1.6 0 1.1 3.6 1.9 8 1.9s8-.8 8-1.9c0-.6-1.2-1.1-2.5-1.4" /><path d="M10 14c-2.7.5-4.5 1.4-4.5 2.2 0 1 3.2 1.8 7 1.8 4 0 7-.9 7-1.9 0-.6-1.1-1.2-2.5-1.5" /><path d="M12 2c2 3-1 4-1 6 0 1.2 1.2 2 1.2 2M8.5 8.5C6.5 10 6 11 6 12c0 1.5 2 2.5 6 2.5s6-1 6-2.5c0-1.2-1-2.1-2.5-3" /></svg>
+          </div>
+          <div class="java-meta">
+            <div class="java-title">Java <span id="javaVersion">—</span></div>
+            <div class="java-sub" id="javaSub">Определяется при выборе версии</div>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <span>MINE LAUNCHER</span>
+          <span id="appVersion">1.0.0</span>
+        </div>
+      </aside>
+
+      <main class="content">
+        <div class="content-head">
+          <div class="heading">
+            <h1>Библиотека версий</h1>
+            <p id="librarySub">Загрузка списка версий…</p>
+          </div>
+          <div class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
+            <input id="search" type="text" placeholder="Найти версию…" autocomplete="off" spellcheck="false" />
+            <kbd>Ctrl K</kbd>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="chips" id="filters">
+            <button class="chip active" type="button" data-filter="release">Релизы</button>
+            <button class="chip" type="button" data-filter="all">Все</button>
+            <button class="chip" type="button" data-filter="snapshot">Снапшоты</button>
+            <button class="chip" type="button" data-filter="old">Старые</button>
+            <button class="chip" type="button" data-filter="alpha">Альфы</button>
+            <button class="chip" type="button" data-filter="beta">Беты</button>
+            <button class="chip" type="button" data-filter="installed">Установленные</button>
+          </div>
+          <div class="toolbar-note"><span class="dot dot-green"></span> Интернет нужен только для загрузки</div>
+        </div>
+
+        <div class="main-grid">
+          <section class="versions-panel panel">
+            <div class="version-list" id="versionList" role="listbox" aria-label="Версии Minecraft"></div>
+            <div class="list-loading" id="listLoading">
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+              <div class="skeleton-row"></div>
+            </div>
+            <div class="list-empty hidden" id="listEmpty">
+              <div class="empty-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v12H4zM4 7l8-4 8 4M8 12h8" /></svg>
+              </div>
+              <h3 id="emptyTitle">Здесь пока пусто</h3>
+              <p id="emptyText">Не удалось найти версии по выбранному фильтру.</p>
+              <button class="button-ghost" id="emptyRetry" type="button">Обновить список</button>
+            </div>
+          </section>
+
+          <aside class="launch-column">
+            <section class="launch-panel panel">
+              <div class="launch-top">
+                <div class="eyebrow">К ЗАПУСКУ</div>
+                <div class="selected-version" id="selectedVersion">—</div>
+                <div class="selected-badges" id="selectedBadges"></div>
+              </div>
+
+              <div class="details-grid" id="detailsGrid">
+                <div class="detail-cell"><span>Тип</span><b id="detailType">—</b></div>
+                <div class="detail-cell"><span>Дата</span><b id="detailDate">—</b></div>
+                <div class="detail-cell"><span>Java</span><b id="detailJava">—</b></div>
+                <div class="detail-cell"><span>Размер</span><b id="detailSize">—</b></div>
+              </div>
+
+              <button class="account-row" type="button" data-open-settings title="Изменить никнейм">
+                <canvas class="avatar avatar-sm" id="cardAvatar" width="8" height="8" aria-hidden="true"></canvas>
+                <span class="account-meta">
+                  <span class="account-name" id="cardName">Steve</span>
+                  <span class="account-sub">Офлайн-режим</span>
+                </span>
+                <span class="account-badge">БЕЗ АККАУНТА</span>
+              </button>
+
+              <button class="play-button" id="playButton" type="button" disabled>
+                <span class="play-glow"></span>
+                <span class="play-icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5Z" /></svg>
+                </span>
+                <span class="play-text">
+                  <strong id="playLabel">Выберите версию</strong>
+                  <small id="playHint">Офлайн-запуск без аккаунта</small>
+                </span>
+                <span class="play-key">↵</span>
+              </button>
+
+              <button class="stop-button hidden" id="stopButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5" /></svg>
+                Остановить игру
+              </button>
+
+              <div class="session-box hidden" id="sessionBox">
+                <div class="session-row">
+                  <span id="sessionLabel">Подготовка…</span>
+                  <b id="sessionPercent"></b>
+                </div>
+                <div class="progress" id="progressTrack"><div class="progress-bar" id="progressBar"></div></div>
+                <div class="session-detail">
+                  <span id="sessionDetail">Проверка файлов…</span>
+                  <button class="link-button" id="cancelButton" type="button">Отмена</button>
+                </div>
+              </div>
+
+              <div class="error-box hidden" id="errorBox">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v6M12 17h.01" /></svg>
+                <div id="errorText"></div>
+              </div>
+
+              <div class="launch-note" id="launchNote">Файлы скачиваются с серверов Mojang. Аккаунт не требуется.</div>
+
+              <div class="launch-foot">
+                <button class="mini-button" id="openVersionFolder" type="button" disabled>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" /></svg>
+                  Папка версии
+                </button>
+                <button class="mini-button" id="openGameFolder" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" /></svg>
+                  .minecraft
+                </button>
+              </div>
+            </section>
+
+            <section class="mini-stats">
+              <div><span>Java</span><b id="statJava">—</b></div>
+              <div><span>Размер</span><b id="statSize">—</b></div>
+              <div><span>Статус</span><b id="statState">—</b></div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="console-panel panel collapsed" id="consolePanel">
+          <div class="console-head">
+            <div class="console-title">
+              <span class="console-dot" id="consoleDot"></span>
+              Консоль
+              <span class="console-count" id="consoleCount">0</span>
+            </div>
+            <div class="console-actions">
+              <button class="link-button" id="clearConsole" type="button">Очистить</button>
+              <button class="icon-button small" id="toggleConsole" type="button" aria-label="Развернуть консоль">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6" /></svg>
+              </button>
+            </div>
+          </div>
+          <div class="console-body" id="consoleBody"></div>
+        </section>
+
+        <footer class="statusbar">
+          <div class="status-left">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Инициализация…</span>
+          </div>
+          <div class="status-right">
+            <span id="statusPath">.minecraft</span>
+            <span class="status-sep">·</span>
+            <span id="statusVersion">v1.0.0</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="settingsModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <header class="modal-head">
+        <div>
+          <h2 id="settingsTitle">Настройки</h2>
+          <p>Профиль, память, Java и параметры запуска</p>
+        </div>
+        <button class="icon-button" id="closeSettings" type="button" aria-label="Закрыть настройки">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <section class="settings-section">
+          <h3>Профиль</h3>
+          <label class="field">
+            <span>Никнейм</span>
+            <input id="settingsName" type="text" maxlength="16" autocomplete="off" spellcheck="false" />
+            <small>2–16 символов: латиница, цифры или «_». Аккаунт не нужен.</small>
+            <small class="error-text hidden" id="nameError">Такой никнейм использовать нельзя.</small>
+          </label>
+        </section>
+
+        <section class="settings-section">
+          <h3>Производительность</h3>
+          <div class="slider-row">
+            <label for="ramSlider">Оперативная память</label>
+            <div class="ram-value" id="ramValue">2 ГБ</div>
+          </div>
+          <input id="ramSlider" type="range" min="1024" max="16384" step="512" />
+          <div class="slider-scale"><span id="ramMin">1 ГБ</span><span id="ramMax">16 ГБ</span></div>
+          <label class="field">
+            <span>Дополнительные аргументы JVM</span>
+            <input id="settingsJvm" type="text" placeholder="-XX:+UseG1GC" autocomplete="off" spellcheck="false" />
+            <small>Необязательно. Например: -XX:+UseG1GC</small>
+          </label>
+        </section>
+
+        <section class="settings-section">
+          <h3>Игра</h3>
+          <label class="field">
+            <span>Папка игры</span>
+            <div class="input-row">
+              <input id="settingsDir" type="text" readonly />
+              <button class="button-ghost compact" id="browseDir" type="button">Изменить</button>
+              <button class="button-ghost compact" id="openDir" type="button">Открыть</button>
+            </div>
+          </label>
+          <div class="check-row">
+            <label class="check">
+              <input id="settingsResolution" type="checkbox" />
+              <span class="checkbox"></span>
+              Своё разрешение окна
+            </label>
+            <div class="resolution-inputs" id="resolutionInputs">
+              <input id="settingsWidth" type="number" min="320" max="7680" step="1" />
+              <span>×</span>
+              <input id="settingsHeight" type="number" min="240" max="4320" step="1" />
+            </div>
+          </div>
+          <label class="check">
+            <input id="settingsFullscreen" type="checkbox" />
+            <span class="checkbox"></span>
+            Полноэкранный режим
+          </label>
+        </section>
+
+        <section class="settings-section">
+          <h3>Java</h3>
+
+          <div class="java-setting-status" id="settingsJavaStatus">
+            <span class="dot" id="settingsJavaDot"></span>
+            <div class="java-setting-text">
+              <b id="settingsJavaTitle">Автоматический выбор</b>
+              <span id="settingsJavaText">Лаунчер подберёт Java под выбранную версию игры.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <span>Путь к java.exe или папке с Java</span>
+            <div class="input-row">
+              <input id="settingsJava" type="text" placeholder="Автоматически: найти или скачать" autocomplete="off" spellcheck="false" />
+              <button class="button-ghost compact" id="browseJava" type="button">Выбрать</button>
+              <button class="button-ghost compact" id="detectJava" type="button">Проверить</button>
+            </div>
+            <div class="java-tools">
+              <button class="link-button" id="autoJava" type="button">Выбирать автоматически</button>
+              <button class="link-button" id="findJava" type="button">Найти установленные Java</button>
+            </div>
+            <div class="java-candidates hidden" id="javaCandidates"></div>
+            <small>Указанная Java используется, если подходит версии. Для остальных лаунчер сам найдёт или скачает нужную — например, Java 8 для старых версий.</small>
+          </div>
+        </section>
+      </div>
+
+      <footer class="modal-foot">
+        <button class="button-ghost" id="cancelSettings" type="button">Отмена</button>
+        <button class="button-primary" id="saveSettings" type="button">Сохранить</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <div class="modal-backdrop hidden" id="loadersModal">
+    <div class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="loadersTitle">
+      <header class="modal-head">
+        <div>
+          <h2 id="loadersTitle">Модификации</h2>
+          <p>Fabric, Quilt, Forge, NeoForge и OptiFine — установка из лаунчера</p>
+        </div>
+        <button class="icon-button" id="closeLoaders" type="button" aria-label="Закрыть модификации">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <label class="field">
+          <span>Версия Minecraft</span>
+          <div class="input-row">
+            <input id="loaderGame" type="text" list="loaderGameList" placeholder="Например, 1.21.11" autocomplete="off" spellcheck="false" />
+            <datalist id="loaderGameList"></datalist>
+            <button class="button-ghost compact" id="loaderGameUseSelected" type="button">Взять выбранную</button>
+          </div>
+          <small>Сначала укажите версию игры, затем выберите загрузчик. Установленная версия появится в библиотеке.</small>
+        </label>
+
+        <div class="loader-grid">
+          <article class="loader-card" data-kind="fabric">
+            <div class="loader-card-head">
+              <span class="loader-mark loader-mark-fabric"></span>
+              <div>
+                <h3>Fabric</h3>
+                <p>Лёгкий загрузчик модов. Установка мгновенная, без Java.</p>
+              </div>
+            </div>
+            <div class="loader-row">
+              <select id="loaderVersion-fabric" aria-label="Версия Fabric"></select>
+              <button class="button-primary compact" data-install="fabric" type="button">Установить</button>
+            </div>
+            <div class="loader-hint" id="loaderHint-fabric">Загрузка списка…</div>
+          </article>
+
+          <article class="loader-card" data-kind="quilt">
+            <div class="loader-card-head">
+              <span class="loader-mark loader-mark-quilt"></span>
+              <div>
+                <h3>Quilt</h3>
+                <p>Форк Fabric с собственными модами и библиотеками.</p>
+              </div>
+            </div>
+            <div class="loader-row">
+              <select id="loaderVersion-quilt" aria-label="Версия Quilt"></select>
+              <button class="button-primary compact" data-install="quilt" type="button">Установить</button>
+            </div>
+            <div class="loader-hint" id="loaderHint-quilt">Загрузка списка…</div>
+          </article>
+
+          <article class="loader-card" data-kind="forge">
+            <div class="loader-card-head">
+              <span class="loader-mark loader-mark-forge"></span>
+              <div>
+                <h3>Forge</h3>
+                <p>Классический загрузчик модов. Установщик скачает библиотеки сам.</p>
+              </div>
+            </div>
+            <div class="loader-row">
+              <select id="loaderVersion-forge" aria-label="Версия Forge"></select>
+              <button class="button-primary compact" data-install="forge" type="button">Установить</button>
+            </div>
+            <div class="loader-hint" id="loaderHint-forge">Загрузка списка…</div>
+          </article>
+
+          <article class="loader-card" data-kind="neoforge">
+            <div class="loader-card-head">
+              <span class="loader-mark loader-mark-neoforge"></span>
+              <div>
+                <h3>NeoForge</h3>
+                <p>Современный форк Forge для новых версий Minecraft.</p>
+              </div>
+            </div>
+            <div class="loader-row">
+              <select id="loaderVersion-neoforge" aria-label="Версия NeoForge"></select>
+              <button class="button-primary compact" data-install="neoforge" type="button">Установить</button>
+            </div>
+            <div class="loader-hint" id="loaderHint-neoforge">Загрузка списка…</div>
+          </article>
+
+          <article class="loader-card loader-card-wide" data-kind="optifine">
+            <div class="loader-card-head">
+              <span class="loader-mark loader-mark-optifine"></span>
+              <div>
+                <h3>OptiFine</h3>
+                <p>Оптимизация и шейдеры. Скачайте установщик на optifine.net, выберите файл — лаунчер запустит его в вашей папке игры.</p>
+              </div>
+            </div>
+            <div class="loader-row">
+              <button class="button-ghost compact" id="optifineSite" type="button">Открыть optifine.net</button>
+              <button class="button-primary compact" id="optifinePick" type="button">Выбрать установщик…</button>
+            </div>
+            <div class="loader-hint" id="loaderHint-optifine">В окне установщика нажмите Install, лаунчер дождётся завершения.</div>
+          </article>
+        </div>
+
+        <div class="loader-status hidden" id="loaderStatus">
+          <span class="spinner" aria-hidden="true"></span>
+          <div>
+            <b id="loaderStatusTitle">Установка…</b>
+            <span id="loaderStatusText">Подробности — в консоли ниже.</span>
+          </div>
+          <button class="link-button" id="loaderCancel" type="button">Отмена</button>
+        </div>
+      </div>
+
+      <footer class="modal-foot">
+        <button class="button-ghost" id="loadersFolder" type="button">Папка версий</button>
+        <button class="button-primary" id="closeLoadersFoot" type="button">Готово</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="skinModal">
+    <div class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="skinTitle">
+      <header class="modal-head">
+        <div>
+          <h2 id="skinTitle">Редактор скина</h2>
+          <p>Нарисуйте скин — он применится к персонажу при запуске</p>
+        </div>
+        <button class="icon-button" id="closeSkin" type="button" aria-label="Закрыть редактор скина">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </header>
+
+      <div class="modal-body skin-body">
+        <div class="skin-editor">
+          <div class="skin-canvas-wrap">
+            <canvas id="skinCanvas" width="64" height="64" aria-label="Холст скина"></canvas>
+            <div class="skin-hover" id="skinHover">—</div>
+          </div>
+          <div class="skin-tools">
+            <div class="skin-tool-row">
+              <button class="tool-button active" data-tool="pencil" type="button" title="Карандаш">✎</button>
+              <button class="tool-button" data-tool="eraser" type="button" title="Ластик">⌫</button>
+              <button class="tool-button" data-tool="fill" type="button" title="Заливка">▩</button>
+              <button class="tool-button" data-tool="picker" type="button" title="Пипетка">◎</button>
+            </div>
+            <label class="skin-color">
+              <span>Цвет</span>
+              <input id="skinColor" type="color" value="#4fc3f7" />
+            </label>
+            <div class="skin-palette" id="skinPalette"></div>
+            <div class="skin-tool-row">
+              <button class="button-ghost compact" id="skinUndo" type="button">Отменить</button>
+              <button class="button-ghost compact" id="skinRedo" type="button">Повторить</button>
+            </div>
+            <div class="skin-tool-row">
+              <button class="button-ghost compact" id="skinBase">Шаблон</button>
+              <button class="button-ghost compact" id="skinClear" type="button">Очистить</button>
+              <button class="button-ghost compact" id="skinImport" type="button">Загрузить PNG</button>
+            </div>
+            <input id="skinFile" type="file" accept="image/png" class="hidden" />
+          </div>
+        </div>
+
+        <div class="skin-side">
+          <div class="skin-preview">
+            <canvas id="skinPreview" width="120" height="220" aria-label="Предпросмотр скина"></canvas>
+            <div class="skin-preview-caption">Предпросмотр</div>
+          </div>
+          <label class="check">
+            <input id="skinEnabled" type="checkbox" checked />
+            <span class="checkbox"></span>
+            Применять скин при запуске
+          </label>
+          <p class="skin-note">
+            Скин подставляется на место стандартного Стива/Алекса для офлайн-игры.
+            В одиночной игре и на офлайн-серверах персонаж будет выглядеть так.
+          </p>
+          <div class="skin-tool-row">
+            <button class="button-ghost compact" id="skinExport" type="button">Скачать PNG</button>
+            <button class="button-ghost compact" id="skinReset" type="button">Сбросить</button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal-foot">
+        <span class="modal-foot-note" id="skinStatus">Изменения сохраняются на диск</span>
+        <button class="button-primary" id="skinSave" type="button">Сохранить скин</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

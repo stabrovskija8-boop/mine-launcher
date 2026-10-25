@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MINE Launcher — Minecraft офлайн по нику</title>
+    <meta
+      name="description"
+      content="MINE Launcher — офлайн-лаунчер Minecraft для Windows. Вход по нику без аккаунта, все версии игры, Fabric, Quilt, Forge, NeoForge, OptiFine и редактор скина."
+    />
+    <meta name="theme-color" content="#080b0a" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 58 18v28L32 60 6 46V18z' fill='%235df58b'/%3E%3Cpath d='M32 4 58 18 32 32 6 18z' fill='%23a8ffc4'/%3E%3Cpath d='M32 32v28L6 46V18z' fill='%2328b45b'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow" aria-hidden="true"></div>
+
+    <header class="site-header" id="top">
+      <div class="container header-inner">
+        <a class="brand" href="#top" aria-label="MINE Launcher — на главную">
+          <svg class="brand-cube" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 4 58 18v28L32 60 6 46V18z" fill="currentColor" opacity=".95" />
+            <path d="M32 4 58 18 32 32 6 18z" fill="#b6ffcd" />
+            <path d="M32 32v28L6 46V18z" fill="#1d8f47" />
+          </svg>
+          <span class="brand-name">MINE<span>LAUNCHER</span></span>
+          <span class="brand-tag">offline</span>
+        </a>
+
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav">
+          <span></span><span></span><span></span>
+          <span class="sr-only">Открыть меню</span>
+        </button>
+
+        <nav class="nav" id="nav">
+          <a href="#features">Возможности</a>
+          <a href="#screens">Скриншоты</a>
+          <a href="#install">Установка</a>
+          <a href="#faq">Вопросы</a>
+          <a class="nav-github" href="https://github.com/stabrovskija8-boop/mine-launcher" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M12 .5A11.5 11.5 0 0 0 .5 12.3c0 5.2 3.3 9.6 7.9 11.2.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.6-3.9-1.6-.5-1.4-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.8 2.7 1.3 3.3 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11 11 0 0 1 6 0C17.4 4.6 18.4 5 18.4 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.7 5.6-5.3 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6a11.6 11.6 0 0 0 7.9-11.2A11.5 11.5 0 0 0 12 .5Z"
+              />
+            </svg>
+            GitHub
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero container">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot"></span> Windows 10/11 · без аккаунта Mojang</p>
+          <h1>Minecraft<br /><span class="accent">офлайн</span>, по нику</h1>
+          <p class="lead">
+            Лаунчер сам скачает игру, нужную Java и моды. Введи ник — и играй.
+            Ни Microsoft-аккаунта, ни паролей, ни лишних движений.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" id="downloadLink" href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12 3v11.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4L10 14.2V3h2ZM5 19h14v2H5v-2Z" />
+              </svg>
+              Скачать для Windows
+            </a>
+            <a class="btn btn-ghost" href="#features">Что внутри</a>
+          </div>
+          <ul class="hero-badges">
+            <li>922 версии</li>
+            <li>5 загрузчиков</li>
+            <li>Java автоматически</li>
+          </ul>
+        </div>
+
+        <div class="hero-shot">
+          <div class="window">
+            <div class="window-bar"><i></i><i></i><i></i></div>
+            <img src="assets/launcher.png" alt="Главное окно MINE Launcher со списком версий Minecraft" width="1240" height="832" />
+          </div>
+          <div class="float-card float-skin">
+            <span class="float-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12 3a4 4 0 0 1 4 4v1h1a2 2 0 0 1 2 2v3h-4v2h4v3a1 1 0 0 1-1 1h-3v-2h-2v2H8v-2H6v2H5a1 1 0 0 1-1-1v-4H2v-2h2V9a2 2 0 0 1 2-2h1V7a4 4 0 0 1 4-4Zm-1 4v2h2V6h-2Z" />
+              </svg>
+            </span>
+            <div><strong>Свой скин</strong><small>рисуется в лаунчере</small></div>
+          </div>
+          <div class="float-card float-mods">
+            <span class="float-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M10 3h4v5.2a6 6 0 1 1-4 0V3Zm2 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
+              </svg>
+            </span>
+            <div><strong>Fabric · Forge</strong><small>и ещё 3 загрузчика</small></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats container" aria-label="Кратко о лаунчере">
+        <div><b>922</b><span>версии игры</span></div>
+        <div><b>5</b><span>загрузчиков модов</span></div>
+        <div><b>9</b><span>скинов персонажа</span></div>
+        <div><b>0</b><span>аккаунтов нужно</span></div>
+      </section>
+
+      <section class="section container" id="features">
+        <div class="section-head">
+          <p class="eyebrow">Возможности</p>
+          <h2>Всё, что нужно для игры</h2>
+          <p class="section-sub">От первого запуска до любимой сборки с модами.</p>
+        </div>
+
+        <div class="cards">
+          <article class="card reveal">
+            <span class="card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5Z"/></svg>
+            </span>
+            <h3>Офлайн-вход по нику</h3>
+            <p>Ввёл ник — играешь. Без Mojang, Microsoft и паролей. Игре интернет не нужен.</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 2 7l10 5 10-5-10-5Zm0 12L2 9v6l10 5 10-5V9l-10 5Z"/></svg>
+            </span>
+            <h3>Все версии</h3>
+            <p>Релизы, снапшоты, старые версии, альфы и беты — от первой классики до 26.3.</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 3h4v5.2a6 6 0 1 1-4 0V3Zm2 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/></svg>
+            </span>
+            <h3>Моды и загрузчики</h3>
+            <p>Fabric, Quilt, Forge, NeoForge и OptiFine устанавливаются прямо из лаунчера.</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h7l10 10-7 7L4 10V3Zm3 3v3h3V6H7Z"/></svg>
+            </span>
+            <h3>Редактор скина</h3>
+            <p>Карандаш, заливка, пипетка, палитра и предпросмотр. Скин сразу виден в игре.</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 3h2v8h3V5h2v6h3V4h2v9a6 6 0 0 1-5 5.9V21h-2v-2.1A6 6 0 0 1 6 13V3Z"/></svg>
+            </span>
+            <h3>Java автоматически</h3>
+            <p>Подходящая версия Java скачивается сама — Zulu, а при сбое Adoptium.</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16v2H4V4Zm0 5h10v2H4V9Zm0 5h16v2H4v-2Zm0 5h10v2H4v-2Z"/></svg>
+            </span>
+            <h3>Прозрачность</h3>
+            <p>Прогресс загрузки, консоль игры и безопасная отмена запуска в один клик.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section container" id="screens">
+        <div class="section-head">
+          <p class="eyebrow">Скриншоты</p>
+          <h2>Как это выглядит</h2>
+          <p class="section-sub">Тёмный интерфейс, ничего лишнего.</p>
+        </div>
+
+        <figure class="shot-wide reveal">
+          <img src="assets/launcher.png" alt="Библиотека версий Minecraft в MINE Launcher" loading="lazy" width="1240" height="832" />
+          <figcaption>Библиотека версий: релизы, снапшоты, старые сборки, альфы и беты.</figcaption>
+        </figure>
+
+        <div class="shot-grid">
+          <figure class="reveal">
+            <img src="assets/skin-editor.png" alt="Редактор скина Minecraft в лаунчере" loading="lazy" width="1240" height="832" />
+            <figcaption>Редактор скина с палитрой, заливкой и предпросмотром.</figcaption>
+          </figure>
+          <figure class="reveal">
+            <img src="assets/mods.png" alt="Окно установки Fabric, Quilt, Forge, NeoForge и OptiFine" loading="lazy" width="1240" height="832" />
+            <figcaption>Установка загрузчиков и OptiFine в пару кликов.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section container" id="install">
+        <div class="section-head">
+          <p class="eyebrow">Установка</p>
+          <h2>Три шага до игры</h2>
+        </div>
+
+        <ol class="steps">
+          <li class="reveal">
+            <span class="step-num">01</span>
+            <h3>Скачай и распакуй</h3>
+            <p>Загрузи архив с GitHub Releases и распакуй его в любую папку. Установка не нужна.</p>
+          </li>
+          <li class="reveal">
+            <span class="step-num">02</span>
+            <h3>Запусти лаунчер</h3>
+            <p>Открой <code>MINE Launcher.exe</code> (или «Запустить лаунчер.bat» из исходников).</p>
+          </li>
+          <li class="reveal">
+            <span class="step-num">03</span>
+            <h3>Введи ник и играй</h3>
+            <p>Выбери версию, нажми «Скачать и играть». Java и файлы игра скачает сама.</p>
+          </li>
+        </ol>
+
+        <div class="note">
+          <strong>Требования:</strong> Windows 10/11 (64-bit), ~2 ГБ на диске для игры и Java,
+          интернет — только для первой загрузки. Данные хранятся в
+          <code>%APPDATA%\MINE Launcher</code>, игра — в <code>%APPDATA%\.minecraft</code>.
+        </div>
+      </section>
+
+      <section class="section container" id="faq">
+        <div class="section-head">
+          <p class="eyebrow">FAQ</p>
+          <h2>Частые вопросы</h2>
+        </div>
+
+        <div class="faq">
+          <details class="reveal">
+            <summary>Нужен ли аккаунт Minecraft?</summary>
+            <p>Нет. Лаунчер работает в офлайн-режиме: достаточно любого ника. Аккаунт Mojang или Microsoft не требуется.</p>
+          </details>
+          <details class="reveal">
+            <summary>Можно ли играть на серверах?</summary>
+            <p>На серверах, где включён <code>online-mode=false</code>, — да. На официальных серверах с проверкой лицензии офлайн-вход не подойдёт.</p>
+          </details>
+          <details class="reveal">
+            <summary>Куда сохраняется скин?</summary>
+            <p>В <code>%APPDATA%\MINE Launcher\skin\skin.png</code>. При запуске лаунчер собирает ресурспак и подставляет скин всем стандартным моделям персонажа.</p>
+          </details>
+          <details class="reveal">
+            <summary>Какие версии поддерживаются?</summary>
+            <p>Все релизы, снапшоты, альфы и беты из официального манифеста Mojang. Для новых версий Java скачивается автоматически.</p>
+          </details>
+          <details class="reveal">
+            <summary>Это безопасно?</summary>
+            <p>Лаунчер не запрашивает пароли и не отправляет ник на сторонние серверы. Файлы игры и Java загружаются с официальных адресов Mojang и Azul/Adoptium. Исходный код открыт.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <svg class="brand-cube" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 4 58 18v28L32 60 6 46V18z" fill="currentColor" opacity=".95" />
+            <path d="M32 4 58 18 32 32 6 18z" fill="#b6ffcd" />
+            <path d="M32 32v28L6 46V18z" fill="#1d8f47" />
+          </svg>
+          <div><strong>MINE Launcher</strong><span>Minecraft офлайн для Windows</span></div>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com/stabrovskija8-boop/mine-launcher" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest" target="_blank" rel="noopener">Релизы</a>
+          <a href="https://github.com/stabrovskija8-boop/mine-launcher/issues" target="_blank" rel="noopener">Сообщить о проблеме</a>
+        </div>
+        <p class="footer-legal">
+          © <span id="year">2026</span> MINE Launcher · MIT. Не связан с Mojang Studios или Microsoft.
+          Minecraft — торговая марка Mojang Studios.
+        </p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
