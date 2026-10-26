@@ -126,6 +126,34 @@ async function iconDataUrl(url, signal) {
   return result;
 }
 
+function compareGameVersions(a, b) {
+  const left = String(a).split('.').map((part) => Number(part) || 0);
+  const right = String(b).split('.').map((part) => Number(part) || 0);
+  const length = Math.max(left.length, right.length);
+  for (let index = 0; index < length; index += 1) {
+    const diff = (left[index] || 0) - (right[index] || 0);
+    if (diff) return diff;
+  }
+  return 0;
+}
+
+// Modrinth отдаёт все версии, включая снапшоты и пре-релизы.
+// Для карточки оставляем только стабильные релизы, новые сверху.
+function releaseGameVersions(list) {
+  const seen = new Set();
+  return (Array.isArray(list) ? list : [])
+    .map((value) => String(value || ''))
+    .filter((value) => /^\d+\.\d+(?:\.\d+)?$/.test(value))
+    .filter((value) => {
+      if (seen.has(value)) return false;
+      seen.add(value);
+      return true;
+    })
+    .sort(compareGameVersions)
+    .reverse()
+    .slice(0, 60);
+}
+
 function buildFacets(kind, gameVersion, loader) {
   if (kind === 'mod') {
     return [
@@ -182,7 +210,7 @@ async function searchProjects(payload = {}) {
       followers: hit.followers || 0,
       icon: icons[index],
       categories: Array.isArray(hit.categories) ? hit.categories.slice(0, 4) : [],
-      versions: Array.isArray(hit.versions) ? hit.versions.slice(-3) : [],
+      versions: releaseGameVersions(hit.versions),
       projectType: hit.project_type || kind,
     })),
   };

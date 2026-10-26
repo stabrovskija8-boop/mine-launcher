@@ -24,7 +24,7 @@ const state = {
   refreshPromise: null,
   offline: false,
   consoleOpen: false,
-  appVersion: '1.1.0',
+  appVersion: '1.1.1',
   paths: {},
   settingsOpen: false,
   emptyAction: 'retry',
@@ -1749,7 +1749,7 @@ function setCatalogKind(kind, options = {}) {
   if (options.search !== false) loadCatalog(true, true);
 }
 
-function renderCatalogCard(hit) {
+function renderCatalogCard(hit, gameVersion) {
   const kind = state.catalog.kind;
   const card = document.createElement('article');
   card.className = 'catalog-card';
@@ -1796,6 +1796,44 @@ function renderCatalogCard(hit) {
   downloads.textContent = `${formatCatalogCount(hit.downloads)} загрузок`;
   meta.appendChild(downloads);
   card.appendChild(meta);
+
+  const versions = Array.isArray(hit.versions) ? hit.versions : [];
+  if (versions.length) {
+    const box = document.createElement('div');
+    box.className = 'catalog-card-versions';
+
+    const label = document.createElement('span');
+    label.className = 'catalog-versions-label';
+    label.textContent = 'Minecraft';
+    box.appendChild(label);
+
+    const visible = 4;
+    versions.forEach((version, index) => {
+      const chip = document.createElement('span');
+      chip.className = 'catalog-version';
+      chip.textContent = version;
+      if (index >= visible) chip.classList.add('is-extra');
+      if (gameVersion && version === gameVersion) chip.classList.add('is-current');
+      box.appendChild(chip);
+    });
+
+    if (versions.length > visible) {
+      const rest = versions.length - visible;
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'catalog-versions-toggle';
+      toggle.textContent = `+${rest}`;
+      toggle.title = 'Показать все поддерживаемые версии';
+      toggle.addEventListener('click', () => {
+        const expanded = box.classList.toggle('expanded');
+        toggle.textContent = expanded ? 'свернуть' : `+${rest}`;
+        toggle.title = expanded ? 'Свернуть список версий' : 'Показать все поддерживаемые версии';
+      });
+      box.appendChild(toggle);
+    }
+
+    card.appendChild(box);
+  }
 
   const foot = document.createElement('div');
   foot.className = 'catalog-card-foot';
@@ -1867,7 +1905,7 @@ async function loadCatalog(reset = true, force = false) {
     state.catalog.loader = result?.loader || loader;
     for (const hit of result?.hits || []) {
       state.catalog.hits.push(hit);
-      els.catalogResults.appendChild(renderCatalogCard(hit));
+      els.catalogResults.appendChild(renderCatalogCard(hit, game));
     }
 
     const shown = state.catalog.hits.length;

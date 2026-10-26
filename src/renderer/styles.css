@@ -2774,6 +2774,60 @@ input:focus-visible {
   line-height: 1.5;
 }
 
+.catalog-card-versions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.catalog-versions-label {
+  margin-right: 1px;
+  color: var(--dim);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.catalog-version {
+  padding: 1px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.catalog-version.is-current {
+  border-color: rgba(100, 221, 135, 0.38);
+  background: var(--green-soft);
+  color: #a6f0bc;
+}
+
+.catalog-card-versions:not(.expanded) .catalog-version.is-extra {
+  display: none;
+}
+
+.catalog-versions-toggle {
+  padding: 1px 5px;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 9px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.catalog-versions-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--text);
+}
+
 .catalog-card-foot {
   display: flex;
   align-items: center;
