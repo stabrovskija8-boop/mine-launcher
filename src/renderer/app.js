@@ -24,7 +24,7 @@ const state = {
   refreshPromise: null,
   offline: false,
   consoleOpen: false,
-  appVersion: '1.0.0',
+  appVersion: '1.1.0',
   paths: {},
   settingsOpen: false,
   emptyAction: 'retry',
@@ -54,8 +54,27 @@ const state = {
     drawing: false,
     last: null,
     dirty: false,
+    gallery: null,
+    galleryLoading: false,
+    galleryApplying: false,
+    appliedNick: null,
   },
   skinOpen: false,
+  catalog: {
+    open: false,
+    kind: 'mod',
+    game: '',
+    loader: 'fabric',
+    query: '',
+    hits: [],
+    total: 0,
+    loading: false,
+    installing: false,
+    token: 0,
+    timer: null,
+    key: '',
+    installed: new Set(),
+  },
 };
 
 const els = {};
@@ -97,9 +116,15 @@ function cacheElements() {
     'loadersFolder', 'loaderGame', 'loaderGameList', 'loaderGameUseSelected',
     'loaderStatus', 'loaderStatusTitle', 'loaderStatusText', 'loaderCancel',
     'optifineSite', 'optifinePick',
+    'navCatalog', 'catalogModal', 'closeCatalog', 'closeCatalogFoot', 'catalogFolder',
+    'catalogTabs', 'catalogGame', 'catalogGameList', 'catalogLoader', 'catalogLoaderField',
+    'catalogQuery', 'catalogRefresh', 'catalogHint', 'catalogResults', 'catalogEmpty',
+    'catalogStatus', 'catalogStatusTitle', 'catalogStatusText', 'catalogProgressBar',
+    'catalogCancel', 'catalogMore',
     'skinModal', 'closeSkin', 'skinCanvas', 'skinHover', 'skinColor', 'skinPalette',
     'skinUndo', 'skinRedo', 'skinBase', 'skinClear', 'skinImport', 'skinFile',
     'skinPreview', 'skinEnabled', 'skinExport', 'skinReset', 'skinStatus', 'skinSave',
+    'skinGalleryGrid', 'skinGalleryReload',
   ];
   for (const id of ids) els[id] = document.getElementById(id);
 }
@@ -1651,6 +1676,436 @@ async function cancelLoaderInstall() {
   }
 }
 
+/* ================================================================ Каталог */
+
+function formatCatalogCount(value) {
+  const count = Number(value) || 0;
+  if (count >= 1000000) {
+    return `${(count / 1000000).toFixed(count >= 10000000 ? 0 : 1).replace('.', ',')} млн`;
+  }
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(count >= 10000 ? 0 : 1).replace('.', ',')} тыс.`;
+  }
+  return String(count);
+}
+
+function selectedLoaderKind() {
+  const id = String(state.selectedId || '').toLowerCase();
+  if (id.includes('neoforge')) return 'neoforge';
+  if (id.includes('forge')) return 'forge';
+  if (id.includes('quilt')) return 'quilt';
+  return 'fabric';
+}
+
+function populateCatalogGameList() {
+  const list = [];
+  const seen = new Set();
+  const add = (id) => {
+    const value = String(id || '');
+    if (!value || seen.has(value) || !/^\d+\.\d+(?:\.\d+)?$/.test(value)) return;
+    seen.add(value);
+    list.push(value);
+  };
+
+  for (const version of state.localVersions) add(version.id);
+  for (const version of state.manifest?.versions || []) {
+    if (version.type === 'release' || version.type === 'snapshot') add(version.id);
+  }
+
+  els.catalogGameList.replaceChildren();
+  for (const id of list.slice(0, 400)) {
+    const option = document.createElement('option');
+    option.value = id;
+    els.catalogGameList.appendChild(option);
+  }
+}
+
+function catalogKindLabel(kind = state.catalog.kind) {
+  if (kind === 'shader') return 'Шейдеры';
+  if (kind === 'modpack') return 'Сборки';
+  return 'Моды';
+}
+
+function setCatalogKind(kind, options = {}) {
+  if (!['mod', 'shader', 'modpack'].includes(kind)) return;
+  state.catalog.kind = kind;
+  for (const tab of els.catalogTabs.querySelectorAll('[data-catalog-kind]')) {
+    const active = tab.dataset.catalogKind === kind;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', String(active));
+  }
+  els.catalogLoaderField.classList.toggle('hidden', kind !== 'mod');
+  els.catalogFolder.textContent =
+    kind === 'shader' ? 'Папка шейдеров' : kind === 'modpack' ? 'Папка игры' : 'Папка модов';
+
+  els.catalogHint.classList.remove('error');
+  els.catalogHint.textContent =
+    kind === 'mod'
+      ? 'Моды для выбранного загрузчика. Обязательные зависимости ставятся автоматически.'
+      : kind === 'shader'
+        ? 'Шейдерпаки для Iris — нужен Iris и Fabric или NeoForge.'
+        : 'Готовые сборки: моды, настройки и загрузчик установятся вместе.';
+
+  if (options.search !== false) loadCatalog(true, true);
+}
+
+function renderCatalogCard(hit) {
+  const kind = state.catalog.kind;
+  const card = document.createElement('article');
+  card.className = 'catalog-card';
+  card.dataset.slug = hit.slug;
+
+  const head = document.createElement('div');
+  head.className = 'catalog-card-head';
+
+  if (hit.icon) {
+    const icon = document.createElement('img');
+    icon.className = 'catalog-icon';
+    icon.src = hit.icon;
+    icon.alt = '';
+    icon.loading = 'lazy';
+    head.appendChild(icon);
+  } else {
+    const fallback = document.createElement('div');
+    fallback.className = 'catalog-icon catalog-icon-fallback';
+    fallback.textContent = (hit.title || '?').trim().slice(0, 1).toUpperCase();
+    head.appendChild(fallback);
+  }
+
+  const title = document.createElement('div');
+  title.className = 'catalog-card-title';
+  const heading = document.createElement('h3');
+  heading.textContent = hit.title || hit.slug;
+  const description = document.createElement('p');
+  description.textContent = hit.description || 'Без описания';
+  title.append(heading, description);
+  head.appendChild(title);
+  card.appendChild(head);
+
+  const meta = document.createElement('div');
+  meta.className = 'catalog-card-meta';
+  const loaderNames = new Set(['fabric', 'quilt', 'forge', 'neoforge', 'iris', 'optifine']);
+  const tags = (hit.categories || []).filter((tag) => !loaderNames.has(String(tag).toLowerCase())).slice(0, 2);
+  for (const tag of tags) {
+    const chip = document.createElement('span');
+    chip.className = 'catalog-tag';
+    chip.textContent = tag;
+    meta.appendChild(chip);
+  }
+  const downloads = document.createElement('span');
+  downloads.textContent = `${formatCatalogCount(hit.downloads)} загрузок`;
+  meta.appendChild(downloads);
+  card.appendChild(meta);
+
+  const foot = document.createElement('div');
+  foot.className = 'catalog-card-foot';
+  const source = document.createElement('span');
+  source.className = 'catalog-downloads';
+  source.textContent = hit.author ? `от ${hit.author}` : 'Modrinth';
+  foot.appendChild(source);
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'button-primary compact catalog-install';
+  const key = `${kind}:${hit.slug}`;
+  if (state.catalog.installed.has(key)) {
+    button.textContent = kind === 'modpack' ? 'Установлена' : 'Установлен';
+    button.classList.remove('button-primary');
+    button.classList.add('button-ghost');
+    button.disabled = true;
+  } else {
+    button.textContent = kind === 'modpack' ? 'Установить сборку' : 'Установить';
+    button.addEventListener('click', () => installCatalogHit(hit, button));
+  }
+  foot.appendChild(button);
+  card.appendChild(foot);
+
+  return card;
+}
+
+async function loadCatalog(reset = true, force = false) {
+  if (!state.catalog.open) return;
+  const game = els.catalogGame.value.trim();
+  if (!game) {
+    els.catalogHint.textContent = 'Сначала укажите версию Minecraft.';
+    els.catalogHint.classList.add('error');
+    return;
+  }
+
+  const kind = state.catalog.kind;
+  const loader = kind === 'mod' ? els.catalogLoader.value : '';
+  const query = els.catalogQuery.value.trim();
+  const key = `${kind}|${game}|${loader}|${query}`;
+  if (!force && reset && key === state.catalog.key && state.catalog.hits.length) return;
+  state.catalog.key = key;
+
+  const token = ++state.catalog.token;
+  const offset = reset ? 0 : state.catalog.hits.length;
+  state.catalog.loading = true;
+  els.catalogRefresh.disabled = true;
+  els.catalogHint.classList.remove('error');
+  els.catalogHint.textContent = reset ? 'Поиск…' : 'Загружаем ещё…';
+  if (reset) {
+    state.catalog.hits = [];
+    state.catalog.total = 0;
+    els.catalogResults.replaceChildren();
+    els.catalogEmpty.classList.add('hidden');
+    els.catalogMore.classList.add('hidden');
+  }
+
+  try {
+    const result = await api.catalogSearch({
+      kind,
+      gameVersion: game,
+      loader,
+      query,
+      offset,
+    });
+    if (token !== state.catalog.token) return;
+
+    state.catalog.total = Number(result?.total) || 0;
+    state.catalog.loader = result?.loader || loader;
+    for (const hit of result?.hits || []) {
+      state.catalog.hits.push(hit);
+      els.catalogResults.appendChild(renderCatalogCard(hit));
+    }
+
+    const shown = state.catalog.hits.length;
+    els.catalogHint.textContent = state.catalog.total
+      ? `Найдено ${state.catalog.total.toLocaleString('ru-RU')} · показано ${shown}`
+      : '';
+    els.catalogEmpty.classList.toggle('hidden', state.catalog.total > 0 || shown > 0);
+    els.catalogMore.classList.toggle(
+      'hidden',
+      !shown || shown >= state.catalog.total || (result?.hits || []).length === 0,
+    );
+  } catch (error) {
+    if (token !== state.catalog.token) return;
+    els.catalogHint.textContent = cleanError(error);
+    els.catalogHint.classList.add('error');
+    if (!state.catalog.hits.length) els.catalogEmpty.classList.add('hidden');
+  } finally {
+    if (token === state.catalog.token) {
+      state.catalog.loading = false;
+      els.catalogRefresh.disabled = false;
+    }
+  }
+}
+
+function openCatalog() {
+  if (state.game.status === 'preparing' || state.game.status === 'running') {
+    toast('Дождитесь завершения игры или подготовки.', 'warn');
+    return;
+  }
+  state.catalog.open = true;
+  els.catalogModal.classList.remove('hidden');
+  populateCatalogGameList();
+  if (!els.catalogGame.value.trim()) els.catalogGame.value = selectedGameVersion();
+  els.catalogLoader.value = selectedLoaderKind();
+  setCatalogKind(state.catalog.kind, { search: false });
+  loadCatalog(true);
+  els.catalogQuery.focus();
+}
+
+function closeCatalog() {
+  if (state.catalog.installing) {
+    toast('Установка ещё идёт — дождитесь завершения или нажмите «Отмена».', 'warn');
+    return;
+  }
+  state.catalog.open = false;
+  els.catalogModal.classList.add('hidden');
+}
+
+function handleCatalogState(payload = {}) {
+  const spinner = els.catalogStatus.querySelector('.spinner');
+
+  if (payload.type === 'start') {
+    state.catalog.installing = true;
+    els.catalogStatus.classList.remove('hidden');
+    spinner?.classList.remove('hidden');
+    els.catalogStatusTitle.textContent = payload.title ? `Установка «${payload.title}»` : 'Установка…';
+    els.catalogStatusText.textContent = 'Скачивание файлов…';
+    els.catalogProgressBar.style.width = '0%';
+    els.catalogCancel.classList.remove('hidden');
+    els.catalogCancel.disabled = false;
+    return;
+  }
+
+  if (payload.type === 'progress') {
+    if (!state.catalog.installing) return;
+    spinner?.classList.remove('hidden');
+    els.catalogStatus.classList.remove('hidden');
+    els.catalogCancel.classList.remove('hidden');
+    const percent = Number(payload.percent);
+    const hasPercent = Number.isFinite(percent);
+    if (hasPercent) els.catalogProgressBar.style.width = `${clamp(percent, 0, 100)}%`;
+    els.catalogStatusTitle.textContent = payload.label || 'Установка…';
+    const parts = [];
+    if (payload.detail) parts.push(payload.detail);
+    if (hasPercent) parts.push(`${Math.round(percent)}%`);
+    els.catalogStatusText.textContent = parts.join(' · ') || 'Скачивание файлов…';
+    return;
+  }
+
+  if (payload.type === 'error') {
+    spinner?.classList.add('hidden');
+    els.catalogStatus.classList.remove('hidden');
+    els.catalogStatusTitle.textContent = 'Ошибка установки';
+    els.catalogStatusText.textContent = payload.error || 'Подробности — в консоли.';
+    els.catalogCancel.classList.add('hidden');
+    els.catalogProgressBar.style.width = '0%';
+    setTimeout(() => {
+      if (!state.catalog.installing) els.catalogStatus.classList.add('hidden');
+    }, 8000);
+  }
+}
+
+async function installCatalogHit(hit, button) {
+  if (state.catalog.installing) return;
+  const game = els.catalogGame.value.trim();
+  if (!game) {
+    toast('Сначала укажите версию Minecraft.', 'warn');
+    return;
+  }
+
+  const kind = state.catalog.kind;
+  const loader = els.catalogLoader.value;
+  const key = `${kind}:${hit.slug}`;
+  state.catalog.installing = true;
+  els.catalogRefresh.disabled = true;
+  els.catalogStatus.classList.remove('hidden');
+  els.catalogStatus.querySelector('.spinner')?.classList.remove('hidden');
+  els.catalogStatusTitle.textContent = `Установка «${hit.title}»`;
+  els.catalogStatusText.textContent = kind === 'modpack' ? 'Загрузка сборки…' : 'Скачивание файла…';
+  els.catalogProgressBar.style.width = '0%';
+  els.catalogCancel.classList.remove('hidden');
+  els.catalogCancel.disabled = false;
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Установка…';
+  }
+
+  let failed = false;
+  try {
+    const result =
+      kind === 'modpack'
+        ? await api.catalogPack({ slug: hit.slug, title: hit.title, gameVersion: game })
+        : await api.catalogInstall({
+            kind,
+            slug: hit.slug,
+            title: hit.title,
+            gameVersion: game,
+            loader,
+          });
+
+    if (Array.isArray(result?.localVersions)) {
+      state.localVersions = result.localVersions;
+      renderVersions({ keepScroll: true });
+    }
+    if (result?.id) selectVersion(result.id, { auto: false });
+
+    state.catalog.installed.add(key);
+    if (button) {
+      button.disabled = true;
+      button.classList.remove('button-primary');
+      button.classList.add('button-ghost');
+      button.textContent = kind === 'modpack' ? 'Установлена' : 'Установлен';
+    }
+
+    els.catalogStatus.querySelector('.spinner')?.classList.add('hidden');
+    els.catalogStatusTitle.textContent = 'Готово';
+    els.catalogStatusText.textContent = result?.message || `${hit.title} установлен`;
+    els.catalogProgressBar.style.width = '100%';
+    els.catalogCancel.classList.add('hidden');
+    toast(result?.message || `${hit.title} установлен`, 'success', 6000);
+  } catch (error) {
+    failed = true;
+    const message = cleanError(error);
+    const cancelled = /отмен/i.test(message);
+    els.catalogStatus.querySelector('.spinner')?.classList.add('hidden');
+    els.catalogStatusTitle.textContent = cancelled ? 'Отменено' : 'Ошибка установки';
+    els.catalogStatusText.textContent = message;
+    els.catalogProgressBar.style.width = '0%';
+    els.catalogCancel.classList.add('hidden');
+    if (button) {
+      button.disabled = false;
+      button.textContent = kind === 'modpack' ? 'Установить сборку' : 'Установить';
+    }
+    toast(message, cancelled ? 'warn' : 'error', 8000);
+  } finally {
+    state.catalog.installing = false;
+    els.catalogRefresh.disabled = false;
+    els.catalogCancel.classList.add('hidden');
+    setTimeout(
+      () => {
+        if (!state.catalog.installing) els.catalogStatus.classList.add('hidden');
+      },
+      failed ? 8000 : 3000,
+    );
+  }
+}
+
+async function cancelCatalogInstall() {
+  els.catalogCancel.disabled = true;
+  els.catalogStatusTitle.textContent = 'Отмена…';
+  try {
+    await api.catalogCancel();
+  } catch (error) {
+    toast(cleanError(error), 'error', 4000);
+  }
+}
+
+function bindCatalogEvents() {
+  els.navCatalog.addEventListener('click', openCatalog);
+  els.closeCatalog.addEventListener('click', closeCatalog);
+  els.closeCatalogFoot.addEventListener('click', closeCatalog);
+  els.catalogModal.addEventListener('click', (event) => {
+    if (event.target === els.catalogModal) closeCatalog();
+  });
+
+  els.catalogTabs.addEventListener('click', (event) => {
+    const tab = event.target.closest('[data-catalog-kind]');
+    if (!tab) return;
+    setCatalogKind(tab.dataset.catalogKind);
+  });
+
+  els.catalogRefresh.addEventListener('click', () => loadCatalog(true, true));
+  els.catalogMore.addEventListener('click', () => loadCatalog(false));
+  els.catalogCancel.addEventListener('click', cancelCatalogInstall);
+
+  els.catalogGame.addEventListener('change', () => loadCatalog(true, true));
+  els.catalogGame.addEventListener('input', () => {
+    if (state.catalog.timer) clearTimeout(state.catalog.timer);
+    state.catalog.timer = setTimeout(() => loadCatalog(true, true), 650);
+  });
+  els.catalogGame.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (state.catalog.timer) clearTimeout(state.catalog.timer);
+      loadCatalog(true, true);
+    }
+  });
+
+  els.catalogLoader.addEventListener('change', () => loadCatalog(true, true));
+
+  els.catalogQuery.addEventListener('input', () => {
+    if (state.catalog.timer) clearTimeout(state.catalog.timer);
+    state.catalog.timer = setTimeout(() => loadCatalog(true, true), 450);
+  });
+  els.catalogQuery.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (state.catalog.timer) clearTimeout(state.catalog.timer);
+      loadCatalog(true, true);
+    }
+  });
+
+  els.catalogFolder.addEventListener('click', () => {
+    const kind = state.catalog.kind;
+    openFolder(kind === 'shader' ? 'shaderpacks' : kind === 'mod' ? 'mods' : 'game');
+  });
+}
+
 /* ==================================================================== Скин */
 
 const SKIN_SIZE = 64;
@@ -2094,6 +2549,7 @@ async function openSkin() {
   redrawSkinCanvas();
   drawSkinPreview();
   skinUpdateHistoryButtons();
+  loadSkinGallery().catch(() => {});
   els.skinStatus.textContent = state.skin.dirty
     ? 'Есть несохранённые изменения'
     : state.skin.enabled
@@ -2176,6 +2632,101 @@ async function importSkinFile(file) {
   }
 }
 
+/* ------------------------------------------------------- Готовые скины */
+
+function setSkinGalleryMessage(text) {
+  els.skinGalleryGrid.replaceChildren();
+  const message = document.createElement('div');
+  message.className = 'skin-gallery-empty';
+  message.textContent = text;
+  els.skinGalleryGrid.appendChild(message);
+}
+
+function renderSkinGallery() {
+  const items = state.skin.gallery || [];
+  if (!items.length) {
+    setSkinGalleryMessage('Скины не загрузились — попробуйте «Обновить».');
+    return;
+  }
+
+  els.skinGalleryGrid.replaceChildren();
+  for (const item of items) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'skin-gallery-item';
+    button.title = `${item.name || item.nick} · ${item.nick}`;
+    button.setAttribute('aria-label', `Применить скин ${item.name || item.nick}`);
+    button.dataset.nick = item.nick;
+    if (state.skin.appliedNick === item.nick) button.classList.add('applied');
+
+    if (item.face) {
+      const img = document.createElement('img');
+      img.src = item.face;
+      img.alt = '';
+      img.loading = 'lazy';
+      button.appendChild(img);
+    } else {
+      button.textContent = (item.name || item.nick || '?').slice(0, 1);
+    }
+
+    button.addEventListener('click', () => applyGallerySkin(item));
+    els.skinGalleryGrid.appendChild(button);
+  }
+}
+
+async function loadSkinGallery(force = false) {
+  if (state.skin.galleryLoading) return;
+  if (state.skin.gallery && !force) {
+    renderSkinGallery();
+    return;
+  }
+  state.skin.galleryLoading = true;
+  setSkinGalleryMessage('Загрузка скинов…');
+  try {
+    const result = await api.skinGallery({ force });
+    state.skin.gallery = Array.isArray(result?.items) ? result.items : [];
+    renderSkinGallery();
+  } catch (error) {
+    setSkinGalleryMessage('Не удалось загрузить скины');
+    toast(cleanError(error), 'error', 5000);
+  } finally {
+    state.skin.galleryLoading = false;
+  }
+}
+
+async function applyGallerySkin(item) {
+  if (state.skin.galleryApplying || !item?.nick) return;
+  state.skin.galleryApplying = true;
+  const label = item.name || item.nick;
+  els.skinStatus.textContent = `Загрузка скина «${label}»…`;
+  try {
+    const result = await api.skinApplyGallery({ nick: item.nick, name: label });
+    if (!result?.png) throw new Error('Сервер не вернул файл скина.');
+    const data = await imageToSkinData(`data:image/png;base64,${result.png}`);
+    if (!data) throw new Error('Не удалось прочитать PNG скина.');
+
+    state.skin.data = data;
+    state.skin.dirty = false;
+    state.skin.appliedNick = item.nick;
+    redrawSkinCanvas();
+    drawSkinPreview();
+    skinUpdateHistoryButtons();
+    renderSkinGallery();
+    if (state.config) updateAvatars(state.config.username || 'Steve');
+
+    const enabled = els.skinEnabled.checked;
+    els.skinStatus.textContent = enabled
+      ? `Скин «${label}» сохранён · применится при запуске`
+      : `Скин «${label}» сохранён · применение отключено`;
+    toast(`Скин «${label}» применён`, 'success', 5000);
+  } catch (error) {
+    els.skinStatus.textContent = 'Не удалось применить скин';
+    toast(cleanError(error), 'error', 6000);
+  } finally {
+    state.skin.galleryApplying = false;
+  }
+}
+
 function bindSkinEvents() {
   els.navSkin.addEventListener('click', openSkin);
   els.closeSkin.addEventListener('click', closeSkin);
@@ -2220,6 +2771,9 @@ function bindSkinEvents() {
   els.skinEnabled.addEventListener('change', () => {
     state.skin.dirty = true;
     els.skinStatus.textContent = 'Есть несохранённые изменения';
+  });
+  els.skinGalleryReload.addEventListener('click', () => {
+    loadSkinGallery(true).catch(() => {});
   });
 }
 
@@ -2268,9 +2822,11 @@ function bindEvents() {
   api.onLog((payload) => addLog(payload.level, payload.text, payload.time));
   api.onState(handleState);
   api.onLoaderState(handleLoaderState);
+  api.onCatalogState(handleCatalogState);
 
   bindSkinEvents();
   bindLoaderEvents();
+  bindCatalogEvents();
 
   for (const trigger of document.querySelectorAll('[data-open-settings]')) {
     trigger.addEventListener('click', openSettings);
@@ -2381,6 +2937,10 @@ function bindEvents() {
         closeSkin();
         return;
       }
+      if (state.catalog.open) {
+        closeCatalog();
+        return;
+      }
       if (state.loaders.open) {
         closeLoaders();
         return;
@@ -2391,13 +2951,19 @@ function bindEvents() {
       }
     }
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-      if (state.settingsOpen || state.loaders.open || state.skinOpen) return;
+      if (state.settingsOpen || state.loaders.open || state.skinOpen || state.catalog.open) return;
       event.preventDefault();
       els.search.focus();
       els.search.select();
       return;
     }
-    if (event.key === 'Enter' && !state.settingsOpen && !state.loaders.open && !state.skinOpen) {
+    if (
+      event.key === 'Enter' &&
+      !state.settingsOpen &&
+      !state.loaders.open &&
+      !state.skinOpen &&
+      !state.catalog.open
+    ) {
       const active = document.activeElement;
       const typing =
         active &&

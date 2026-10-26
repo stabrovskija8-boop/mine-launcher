@@ -26,6 +26,8 @@ const {
 } = require('./core/java');
 const { loaderVersions, installLoader } = require('./core/loaders');
 const { getSkin, saveSkinFile, resetSkin } = require('./core/skin');
+const { searchProjects, installProject, installPack } = require('./core/catalog');
+const { skinGallery, fetchSkinBuffer } = require('./core/gallery');
 const { USER_AGENT } = require('./core/util');
 
 app.setName('MINE Launcher');
@@ -55,6 +57,8 @@ let activeSession = null;
 let logStream = null;
 let installingLoader = false;
 let loaderController = null;
+let installingCatalog = false;
+let catalogController = null;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -437,6 +441,28 @@ function registerIpc() {
     return { ok: true };
   });
 
+  ipcMain.handle('catalog:search', async (_event, payload = {}) => {
+    return searchProjects(payload);
+  });
+
+  ipcMain.handle('catalog:install', async (_event, payload = {}) => {
+    const label =
+      payload.kind === 'shader'
+        ? `каталог · шейдер ${payload.title || payload.slug || ''}`
+        : `каталог · мод ${payload.title || payload.slug || ''}`;
+    return runCatalogInstall(payload, label, (options) => installProject(payload, options));
+  });
+
+  ipcMain.handle('catalog:pack', async (_event, payload = {}) => {
+    const label = `каталог · сборка ${payload.title || payload.slug || ''}`;
+    return runCatalogInstall(payload, label, (options) => installPack(payload, options));
+  });
+
+  ipcMain.handle('catalog:cancel', async () => {
+    catalogController?.abort();
+    return { ok: true };
+  });
+
   ipcMain.handle('dialog:optifine', async () => {
     const result = await dialog.showOpenDialog(win, {
       title: 'Выберите установщик OptiFine (.jar)',
@@ -482,6 +508,23 @@ function registerIpc() {
     return { ok: true, filePath: result.filePath };
   });
 
+  ipcMain.handle('skin:gallery', async (_event, payload = {}) => {
+    return skinGallery({ force: Boolean(payload?.force) });
+  });
+
+  ipcMain.handle('skin:apply-gallery', async (_event, payload = {}) => {
+    const nick = String(payload?.nick || '').trim();
+    if (!/^[A-Za-z0-9_]{1,16}$/.test(nick)) throw new Error('Неверный ник для скина.');
+    const buffer = await fetchSkinBuffer(nick);
+    await saveSkinFile(paths, buffer.toString('base64'));
+    return {
+      ok: true,
+      nick,
+      name: String(payload?.name || nick),
+      png: buffer.toString('base64'),
+    };
+  });
+
   ipcMain.handle('shell:external', async (_event, url) => {
     const target = String(url || '').trim();
     if (!/^https?:\/\//i.test(target)) throw new Error('Ссылка должна начинаться с http:// или https://');
@@ -495,6 +538,8 @@ function registerIpc() {
     if (kind === 'game') target = config.gameDir;
     else if (kind === 'data') target = paths.dataDir;
     else if (kind === 'logs') target = paths.logsDir;
+    else if (kind === 'mods') target = path.join(config.gameDir, 'mods');
+    else if (kind === 'shaderpacks') target = path.join(config.gameDir, 'shaderpacks');
     else if (kind === 'version') {
       const id = validateVersionId(payload.versionId);
       target = path.join(paths.gameDir, 'versions', id);
@@ -506,6 +551,45 @@ function registerIpc() {
     if (error) throw new Error(error);
     return { ok: true };
   });
+}
+
+async function runCatalogInstall(payload, label, runner) {
+  if (preparing || gameProcess) {
+    throw new Error('Сейчас идёт подготовка или игра уже запущена.');
+  }
+  if (installingLoader) throw new Error('Дождитесь завершения установки загрузчика.');
+  if (installingCatalog) throw new Error('Установка из каталога уже идёт.');
+
+  installingCatalog = true;
+  const controller = new AbortController();
+  catalogController = controller;
+  openLogFile(label);
+  pushLog('info', `=== ${label} ===`);
+  send('catalog:state', { type: 'start', title: payload?.title || label });
+
+  try {
+    const result = await runner({
+      paths,
+      config,
+      signal: controller.signal,
+      onLog: pushLog,
+      onProgress: (progress) => send('catalog:state', { type: 'progress', ...progress }),
+    });
+    const localVersions = await listLocalVersions(paths).catch(() => []);
+    send('catalog:state', { type: 'done', title: payload?.title || label, result });
+    return { ok: true, ...result, localVersions };
+  } catch (error) {
+    pushLog('error', error.message);
+    send('catalog:state', {
+      type: 'error',
+      title: payload?.title || label,
+      error: error.message,
+    });
+    throw error;
+  } finally {
+    installingCatalog = false;
+    catalogController = null;
+  }
 }
 
 async function runSession(session, username) {

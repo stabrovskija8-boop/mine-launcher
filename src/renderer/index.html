@@ -77,6 +77,10 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v10l8 4 8-4V7Z" /><path d="M4 7l8 4 8-4M12 11v10" /></svg>
             Модификации
           </button>
+          <button class="nav-item" type="button" id="navCatalog">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z" /><path d="M4 9h16M9 9v10" /></svg>
+            Каталог
+          </button>
           <button class="nav-item" type="button" id="navSkin">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4" /><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" /><path d="M4 4h3M4 4v3M20 4h-3M20 4v3" /></svg>
             Скин
@@ -490,6 +494,77 @@
     </div>
   </div>
 
+  <div class="modal-backdrop hidden" id="catalogModal">
+    <div class="modal modal-wide catalog-modal" role="dialog" aria-modal="true" aria-labelledby="catalogTitle">
+      <header class="modal-head">
+        <div>
+          <h2 id="catalogTitle">Каталог</h2>
+          <p>Моды, шейдеры и сборки с Modrinth — скачиваются по клику</p>
+        </div>
+        <button class="icon-button" id="closeCatalog" type="button" aria-label="Закрыть каталог">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </header>
+
+      <div class="modal-body catalog-body">
+        <div class="catalog-tabs" id="catalogTabs" role="tablist" aria-label="Тип контента">
+          <button class="catalog-tab active" data-catalog-kind="mod" type="button" role="tab" aria-selected="true">Моды</button>
+          <button class="catalog-tab" data-catalog-kind="shader" type="button" role="tab" aria-selected="false">Шейдеры</button>
+          <button class="catalog-tab" data-catalog-kind="modpack" type="button" role="tab" aria-selected="false">Сборки</button>
+        </div>
+
+        <div class="catalog-controls">
+          <label class="catalog-field">
+            <span>Minecraft</span>
+            <input id="catalogGame" type="text" list="catalogGameList" placeholder="26.3" autocomplete="off" spellcheck="false" />
+            <datalist id="catalogGameList"></datalist>
+          </label>
+          <label class="catalog-field" id="catalogLoaderField">
+            <span>Загрузчик</span>
+            <select id="catalogLoader">
+              <option value="fabric">Fabric</option>
+              <option value="quilt">Quilt</option>
+              <option value="forge">Forge</option>
+              <option value="neoforge">NeoForge</option>
+            </select>
+          </label>
+          <label class="catalog-field catalog-field-wide">
+            <span>Поиск</span>
+            <input id="catalogQuery" type="search" placeholder="sodium, shaders, optimization…" autocomplete="off" spellcheck="false" />
+          </label>
+          <button class="button-primary compact catalog-search-button" id="catalogRefresh" type="button">Найти</button>
+        </div>
+
+        <div class="catalog-hint" id="catalogHint">Выберите версию — покажем популярное.</div>
+
+        <div class="catalog-results" id="catalogResults"></div>
+
+        <div class="catalog-empty hidden" id="catalogEmpty">
+          <b>Ничего не нашлось</b>
+          <span>Попробуйте другую версию, загрузчик или запрос.</span>
+        </div>
+
+        <div class="catalog-status hidden" id="catalogStatus">
+          <span class="spinner" aria-hidden="true"></span>
+          <div class="catalog-status-text">
+            <b id="catalogStatusTitle">Установка…</b>
+            <span id="catalogStatusText">Скачивание файлов…</span>
+            <div class="catalog-progress"><span id="catalogProgressBar"></span></div>
+          </div>
+          <button class="link-button" id="catalogCancel" type="button">Отмена</button>
+        </div>
+
+        <button class="button-ghost catalog-more hidden" id="catalogMore" type="button">Показать ещё</button>
+      </div>
+
+      <footer class="modal-foot">
+        <span class="modal-foot-note">Файлы качаются с Modrinth и кладутся в папку игры</span>
+        <button class="button-ghost" id="catalogFolder" type="button">Папка модов</button>
+        <button class="button-primary" id="closeCatalogFoot" type="button">Готово</button>
+      </footer>
+    </div>
+  </div>
+
   <div class="modal-backdrop hidden" id="skinModal">
     <div class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="skinTitle">
       <header class="modal-head">
@@ -547,6 +622,15 @@
             Скин подставляется на место стандартного Стива/Алекса для офлайн-игры.
             В одиночной игре и на офлайн-серверах персонаж будет выглядеть так.
           </p>
+          <div class="skin-gallery">
+            <div class="skin-gallery-head">
+              <span>Готовые скины</span>
+              <button class="link-button" id="skinGalleryReload" type="button">Обновить</button>
+            </div>
+            <div class="skin-gallery-grid" id="skinGalleryGrid">
+              <div class="skin-gallery-empty">Загрузка…</div>
+            </div>
+          </div>
           <div class="skin-tool-row">
             <button class="button-ghost compact" id="skinExport" type="button">Скачать PNG</button>
             <button class="button-ghost compact" id="skinReset" type="button">Сбросить</button>

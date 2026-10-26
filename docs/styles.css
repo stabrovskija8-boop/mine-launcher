@@ -433,7 +433,7 @@ code {
 /* Статистика */
 .stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 1px;
   margin: 34px auto 0;
   border: 1px solid var(--line);
@@ -576,6 +576,78 @@ figcaption {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-top: 16px;
+}
+
+/* Каталог и готовые скины */
+.cards-tight {
+  margin-top: 16px;
+}
+
+.cards-tight .card h3 {
+  font-size: 16px;
+}
+
+.skin-showcase {
+  margin-top: 16px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, var(--card-2), var(--card));
+  box-shadow: var(--shadow);
+}
+
+.skin-showcase-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.skin-showcase-head h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.skin-showcase-head p {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+
+.skin-showcase-note {
+  flex: 0 0 auto;
+  padding: 5px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.skin-faces {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  gap: 8px;
+}
+
+.skin-faces img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0c1411;
+  image-rendering: pixelated;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.skin-faces img:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
 }
 
 /* Установка */
@@ -1000,6 +1072,15 @@ details p {
   .cards,
   .shot-grid {
     grid-template-columns: 1fr;
+  }
+
+  .skin-showcase {
+    padding: 18px;
+  }
+
+  .skin-showcase-head {
+    flex-direction: column;
+    gap: 10px;
   }
 
   .float-card {

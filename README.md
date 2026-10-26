@@ -2,7 +2,7 @@
 
 Офлайн-лаунчер Minecraft для Windows: сам скачивает нужную версию, библиотеки, ресурсы и Java, а запускает игру по обычному нику — без аккаунта Mojang/Microsoft.
 
-[Сайт лаунчера](https://stabrovskija8-boop.github.io/mine-launcher/) · [Установщик](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.0.0.exe) · [Portable-архив](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.0.0-win64.zip) · [Репозиторий](https://github.com/stabrovskija8-boop/mine-launcher)
+[Сайт лаунчера](https://stabrovskija8-boop.github.io/mine-launcher/) · [Установщик](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.1.0.exe) · [Portable-архив](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.1.0-win64.zip) · [Репозиторий](https://github.com/stabrovskija8-boop/mine-launcher)
 
 ![MINE Launcher](docs/assets/launcher.png)
 
@@ -10,10 +10,11 @@
 
 | Файл | Размер | Что это |
 | --- | --- | --- |
-| `MINE-Launcher-Setup-1.0.0.exe` | ~103 МБ | Установщик: ярлыки в «Пуск» и на рабочем столе, удаление через «Приложения». Права администратора не нужны. |
-| `MINE-Launcher-1.0.0-win64.zip` | ~140 МБ | Portable: распаковать в любую папку и запустить `MINE Launcher.exe`. |
+| `MINE-Launcher-Setup-1.1.0.exe` | ~103 МБ | Установщик: ярлыки в «Пуск» и на рабочем столе, удаление через «Приложения». Права администратора не нужны. |
+| `MINE-Launcher-1.1.0-win64.zip` | ~140 МБ | Portable: распаковать в любую папку и запустить `MINE Launcher.exe`. |
 
-SHA-256 установщика: `c3f842c4753a81bbfc9b80e49f2acefed44363af88034cdbbb12ccdacf5eda39`
+SHA-256 установщика: `9b2891bedd52e6999d58059fc0ba2d77680a087076bf24fab9c1655196ace7a9`
+SHA-256 portable-архива: `1bbb12e1d9e79ac3fa61c45493548f9f8eb72c622bae7b987d5a610bddb06c45`
 
 Сборка не подписана, поэтому SmartScreen может предупредить: «Подробнее» → «Выполнить в любом случае».
 
@@ -37,7 +38,9 @@ SHA-256 установщика: `c3f842c4753a81bbfc9b80e49f2acefed44363af88034cd
 - Автоматическая загрузка Java нужной версии (Azul Zulu, при недоступности — Adoptium Temurin).
 - Поддержка современных и старых версий: `arguments` и `minecraftArguments`, правила ОС, нативы, virtual assets, `inheritsFrom`.
 - **Модификации**: установка Fabric, Quilt, Forge, NeoForge прямо из лаунчера и OptiFine через официальный установщик. Установленная версия сразу появляется в библиотеке.
+- **Каталог Modrinth**: поиск модов, шейдеров и готовых сборок под выбранную версию и загрузчик. Файлы качаются по клику прямо в папку игры, обязательные зависимости модов подтягиваются автоматически, сборки `.mrpack` устанавливаются целиком вместе с загрузчиком.
 - **Редактор скина**: карандаш, ластик, заливка, пипетка, палитра, отмена/повтор, шаблон Стива, импорт и экспорт PNG. Скин применяется к персонажу при запуске через ресурспак.
+- **36 готовых скинов**: Стив, Алекс, Нотч, jeb_, Херобрин, Диннербон, Дрим, Техноблейд, Томми, Уилбур и другие. Выбираются в редакторе одним кликом — лаунчер сам скачивает PNG.
 - Прогресс скачивания, скорость, отмена, лог запуска прямо в окне.
 - Настройки: ник, папка игры, оперативная память, свой путь к Java, дополнительные JVM-аргументы, разрешение окна/полный экран.
 
@@ -55,7 +58,7 @@ SHA-256 установщика: `c3f842c4753a81bbfc9b80e49f2acefed44363af88034cd
 ## Требования
 
 - Windows 10/11, 64-битная.
-- Интернет для первого скачивания версии.
+- Интернет для первого скачивания версии и для установки модов/сборок из каталога.
 - 2 ГБ ОЗУ минимум (рекомендуется 4 ГБ и больше — выставляется в настройках).
 - Java устанавливать вручную не нужно: лаунчер скачает её сам. Если Java уже есть — укажите путь в настройках, и загрузка не понадобится.
 
@@ -66,6 +69,7 @@ SHA-256 установщика: `c3f842c4753a81bbfc9b80e49f2acefed44363af88034cd
 - Скорость скачивания зависит от соединения с серверами Mojang/Azul; при обрыве загрузка повторяется автоматически.
 - Forge/NeoForge/OptiFine устанавливаются официальными установщиками: для Forge и NeoForge загрузка библиотек идёт внутри установщика, для OptiFine нужно нажать «Install» в его окне.
 - Для OptiFine установщик `.jar` нужно предварительно скачать с [optifine.net](https://optifine.net/downloads) — лаунчер поможет выбрать файл.
+- Каталог показывает проекты с [Modrinth](https://modrinth.com); нужен интернет в момент установки. Сборки и моды не входят в установщик — он остаётся ~103 МБ.
 
 ## Сборка установщика
 
@@ -75,4 +79,4 @@ SHA-256 установщика: `c3f842c4753a81bbfc9b80e49f2acefed44363af88034cd
 & "$env:LOCALAPPDATA\InnoSetup6\ISCC.exe" build\setup.iss
 ```
 
-На выходе — `dist\MINE-Launcher-Setup-1.0.0.exe`. Скрипт `build/setup.iss` берёт файлы из `dist\MINE Launcher`, а `build/icon.ico` и `build/wizard.png` — иконку приложения и картинку мастера установки.
+На выходе — `dist\MINE-Launcher-Setup-1.1.0.exe`. Скрипт `build/setup.iss` берёт файлы из `dist\MINE Launcher`, а `build/icon.ico` и `build/wizard.png` — иконку приложения и картинку мастера установки.

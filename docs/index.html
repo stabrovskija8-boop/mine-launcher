@@ -6,7 +6,7 @@
     <title>MINE Launcher — Minecraft офлайн по нику</title>
     <meta
       name="description"
-      content="MINE Launcher — офлайн-лаунчер Minecraft для Windows. Вход по нику без аккаунта, все версии игры, Fabric, Quilt, Forge, NeoForge, OptiFine и редактор скина."
+      content="MINE Launcher — офлайн-лаунчер Minecraft для Windows. Вход по нику без аккаунта, все версии игры, Fabric, Quilt, Forge, NeoForge, OptiFine, каталог модов и сборок с Modrinth и 36 готовых скинов."
     />
     <meta name="theme-color" content="#080b0a" />
     <link
@@ -37,6 +37,7 @@
 
         <nav class="nav" id="nav">
           <a href="#features">Возможности</a>
+          <a href="#catalog">Каталог</a>
           <a href="#screens">Скриншоты</a>
           <a href="#video">Видео</a>
           <a href="#install">Установка</a>
@@ -64,7 +65,7 @@
             Ни Microsoft-аккаунта, ни паролей, ни лишних движений.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" id="downloadLink" href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.0.0.exe">
+            <a class="btn btn-primary" id="downloadLink" href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.1.0.exe">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d="M12 3v11.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4L10 14.2V3h2ZM5 19h14v2H5v-2Z" />
               </svg>
@@ -75,7 +76,8 @@
           <ul class="hero-badges">
             <li>922 версии</li>
             <li>5 загрузчиков</li>
-            <li>Java автоматически</li>
+            <li>Каталог модов</li>
+            <li>36 скинов</li>
             <li>103 МБ</li>
           </ul>
         </div>
@@ -107,7 +109,8 @@
       <section class="stats container" aria-label="Кратко о лаунчере">
         <div><b>922</b><span>версии игры</span></div>
         <div><b>5</b><span>загрузчиков модов</span></div>
-        <div><b>9</b><span>скинов персонажа</span></div>
+        <div><b>36</b><span>готовых скинов</span></div>
+        <div><b>8 600+</b><span>модов в каталоге</span></div>
         <div><b>0</b><span>аккаунтов нужно</span></div>
       </section>
 
@@ -145,10 +148,18 @@
 
           <article class="card reveal">
             <span class="card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 5h16v14H4V5Zm2 3v1.6h12V8H6Zm0 4v1.6h12v-1.6H6Zm0 4v1.6h7V16H6Z"/></svg>
+            </span>
+            <h3>Каталог модов и сборок</h3>
+            <p>Моды, шейдеры и готовые сборки с Modrinth: поиск, версия, загрузчик — и установка в один клик. Зависимости ставятся сами.</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-ico">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h7l10 10-7 7L4 10V3Zm3 3v3h3V6H7Z"/></svg>
             </span>
-            <h3>Редактор скина</h3>
-            <p>Карандаш, заливка, пипетка, палитра и предпросмотр. Скин сразу виден в игре.</p>
+            <h3>Скин и 36 готовых</h3>
+            <p>Нарисуй свой в редакторе или выбери готовый: Стив, Алекс, Нотч, Дрим, Техноблейд и другие. Скин сразу виден в игре.</p>
           </article>
 
           <article class="card reveal">
@@ -190,6 +201,69 @@
             <img src="assets/mods.png" alt="Окно установки Fabric, Quilt, Forge, NeoForge и OptiFine" loading="lazy" width="1240" height="832" />
             <figcaption>Установка загрузчиков и OptiFine в пару кликов.</figcaption>
           </figure>
+        </div>
+      </section>
+
+      <section class="section container" id="catalog">
+        <div class="section-head">
+          <p class="eyebrow">Каталог</p>
+          <h2>Моды, шейдеры и сборки — из лаунчера</h2>
+          <p class="section-sub">
+            Каталог берёт проекты с Modrinth: 8 600+ модов, 300+ шейдеров и 680+ сборок для актуальных версий.
+            Файлы качаются по клику — в установщике их нет, поэтому он остаётся лёгким.
+          </p>
+        </div>
+
+        <figure class="shot-wide reveal">
+          <img src="assets/catalog.png" alt="Каталог модов Modrinth в MINE Launcher" loading="lazy" width="1328" height="855" />
+          <figcaption>
+            Поиск с фильтрами по версии и загрузчику. Обязательные зависимости подтягиваются автоматически.
+          </figcaption>
+        </figure>
+
+        <div class="cards cards-tight">
+          <article class="card reveal">
+            <h3>Моды</h3>
+            <p>Fabric, Quilt, Forge и NeoForge. Лаунчер сам находит подходящую версию файла и ставит нужные библиотеки.</p>
+          </article>
+          <article class="card reveal">
+            <h3>Шейдеры</h3>
+            <p>Complementary, BSL и другие — сразу в <code>shaderpacks</code>. Работают с Iris на Fabric и NeoForge.</p>
+          </article>
+          <article class="card reveal">
+            <h3>Сборки</h3>
+            <p>Готовые <code>.mrpack</code>: моды, конфиги и загрузчик устанавливаются вместе, версия появляется в библиотеке.</p>
+          </article>
+        </div>
+
+        <div class="skin-showcase reveal">
+          <div class="skin-showcase-head">
+            <div>
+              <h3>36 готовых скинов</h3>
+              <p>Выбери лицо в редакторе — скин применится к персонажу при запуске. Без регистраций и лишних сайтов.</p>
+            </div>
+            <span class="skin-showcase-note">1 клик</span>
+          </div>
+          <div class="skin-faces">
+            <img src="assets/skins/steve.png" alt="Скин Стива" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/alex.png" alt="Скин Алекса" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/notch.png" alt="Скин Нотча" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/jeb_.png" alt="Скин jeb_" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/herobrine.png" alt="Скин Херобрина" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/dinnerbone.png" alt="Скин Диннербона" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/dream.png" alt="Скин Дрима" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/technoblade.png" alt="Скин Техноблейда" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/georgenotfound.png" alt="Скин Джорджа" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/sapnap.png" alt="Скин Снапнапа" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/tommyinnit.png" alt="Скин Томми" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/wilbursoot.png" alt="Скин Уилбура" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/philza.png" alt="Скин Филзы" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/tubbo.png" alt="Скин Туббо" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/ranboo.png" alt="Скин Ранбу" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/quackity.png" alt="Скин Квокети" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/fundy.png" alt="Скин Фанди" width="64" height="64" loading="lazy" />
+            <img src="assets/skins/grumm.png" alt="Скин Грамма" width="64" height="64" loading="lazy" />
+          </div>
         </div>
       </section>
 
@@ -256,7 +330,7 @@
           <li class="reveal">
             <span class="step-num">01</span>
             <h3>Скачай установщик</h3>
-            <p>Файл <code>MINE-Launcher-Setup-1.0.0.exe</code> (~103 МБ) с GitHub Releases. Права администратора не нужны.</p>
+            <p>Файл <code>MINE-Launcher-Setup-1.1.0.exe</code> (~103 МБ) с GitHub Releases. Права администратора не нужны.</p>
           </li>
           <li class="reveal">
             <span class="step-num">02</span>
@@ -279,7 +353,7 @@
         <div class="note note-alt">
           <strong>Не хочешь установщик?</strong> Есть portable-архив: распакуй в любую папку и запусти
           <code>MINE Launcher.exe</code>. Скачать:
-          <a href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.0.0-win64.zip">MINE-Launcher-1.0.0-win64.zip</a> (~146 МБ).
+          <a href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.1.0-win64.zip">MINE-Launcher-1.1.0-win64.zip</a> (~140 МБ).
         </div>
       </section>
 
@@ -297,6 +371,14 @@
           <details class="reveal">
             <summary>Можно ли играть на серверах?</summary>
             <p>На серверах, где включён <code>online-mode=false</code>, — да. На официальных серверах с проверкой лицензии офлайн-вход не подойдёт.</p>
+          </details>
+          <details class="reveal">
+            <summary>Откуда берутся моды в каталоге?</summary>
+            <p>Из открытой базы <a href="https://modrinth.com" target="_blank" rel="noopener">Modrinth</a>. Лаунчер ищет файл под выбранную версию Minecraft и загрузчик, качает его и обязательные зависимости прямо в папку <code>mods</code>, <code>shaderpacks</code> или ставит сборку целиком. Интернет нужен только в момент установки.</p>
+          </details>
+          <details class="reveal">
+            <summary>Готовые скины — это чужие аккаунты?</summary>
+            <p>Нет. Это файлы скинов известных персонажей и игроков: лаунчер скачивает PNG и подставляет его вашей офлайн-модели. Ник и аккаунт не меняются.</p>
           </details>
           <details class="reveal">
             <summary>Куда сохраняется скин?</summary>
