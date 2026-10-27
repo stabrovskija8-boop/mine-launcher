@@ -957,6 +957,22 @@ details p {
   text-align: center;
 }
 
+.video-arch {
+  display: block;
+  margin-top: 7px;
+  font-size: 12.5px;
+}
+
+.video-arch a {
+  color: var(--green-soft);
+  border-bottom: 1px solid rgba(126, 232, 162, 0.32);
+  padding-bottom: 1px;
+}
+
+.video-arch a:hover {
+  border-bottom-color: currentColor;
+}
+
 .note-alt {
   border-left-color: var(--muted);
   background: rgba(255, 255, 255, 0.02);
