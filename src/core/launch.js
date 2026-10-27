@@ -509,6 +509,7 @@ function buildLaunchDetails(options) {
     nativesDir,
     classpath,
     loggingPath,
+    server,
   } = options;
 
   const features = {
@@ -612,6 +613,10 @@ function buildLaunchDetails(options) {
     game.push('--width', String(width), '--height', String(height));
   }
 
+  if (server?.host) {
+    game.push('--server', server.host, '--port', String(server.port || 25565));
+  }
+
   if (missing.size) {
     options.onLog?.(
       'warn',
@@ -637,6 +642,7 @@ async function startGame(versionId, options) {
     paths,
     config,
     username,
+    server,
     signal,
     onProgress = () => {},
     onLog = () => {},
@@ -750,6 +756,7 @@ async function startGame(versionId, options) {
     classpath,
     loggingPath,
     librariesDir: paths.librariesDir,
+    server,
     onLog,
   });
 
@@ -763,6 +770,9 @@ async function startGame(versionId, options) {
     'info',
     `Запуск ${version.id} на Java ${java.major || javaMajor}, ОЗУ ${config.ramMB} МБ, игрок ${username}.`,
   );
+  if (server?.host) {
+    onLog('info', `Подключение к серверу ${server.host}:${server.port || 25565}.`);
+  }
 
   const child = spawn(java.path, launchDetails.args, {
     cwd: config.gameDir,

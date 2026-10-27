@@ -38,6 +38,7 @@
         <nav class="nav" id="nav">
           <a href="#features">Возможности</a>
           <a href="#catalog">Каталог</a>
+          <a href="#servers">Серверы</a>
           <a href="#screens">Скриншоты</a>
           <a href="#video">Видео</a>
           <a href="#install">Установка</a>
@@ -65,7 +66,7 @@
             Ни Microsoft-аккаунта, ни паролей, ни лишних движений.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" id="downloadLink" href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.1.1.exe">
+            <a class="btn btn-primary" id="downloadLink" href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.2.0.exe">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="currentColor" d="M12 3v11.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4L10 14.2V3h2ZM5 19h14v2H5v-2Z" />
               </svg>
@@ -77,6 +78,7 @@
             <li>922 версии</li>
             <li>5 загрузчиков</li>
             <li>Каталог модов</li>
+            <li>8 серверов</li>
             <li>36 скинов</li>
             <li>103 МБ</li>
           </ul>
@@ -111,6 +113,7 @@
         <div><b>5</b><span>загрузчиков модов</span></div>
         <div><b>36</b><span>готовых скинов</span></div>
         <div><b>8 600+</b><span>модов в каталоге</span></div>
+        <div><b>8</b><span>серверов в один клик</span></div>
         <div><b>0</b><span>аккаунтов нужно</span></div>
       </section>
 
@@ -152,6 +155,14 @@
             </span>
             <h3>Каталог модов и сборок</h3>
             <p>Моды, шейдеры и готовые сборки с Modrinth: поиск, версия, загрузчик — и установка в один клик. Зависимости ставятся сами.</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card-ico">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 3h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 3v2h2V6H6Zm-2 7h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2Zm2 3v2h2v-2H6Z"/></svg>
+            </span>
+            <h3>Серверы в один клик</h3>
+            <p>8 публичных серверов без лицензии: онлайн, версии и загрузка видны сразу. Нажми «Подключиться» — игра запустится и зайдёт сама.</p>
           </article>
 
           <article class="card reveal">
@@ -268,11 +279,29 @@
         </div>
       </section>
 
+      <section class="section container" id="servers">
+        <div class="section-head">
+          <p class="eyebrow">Серверы</p>
+          <h2>Публичные серверы — в один клик</h2>
+          <p class="section-sub">
+            Восемь проверенных серверов без лицензии: онлайн, поддерживаемые версии и загрузка видны сразу.
+            Нажмите «Подключиться» — лаунчер запустит игру и сам подключит к серверу. Свой адрес тоже можно ввести вручную.
+          </p>
+        </div>
+
+        <figure class="shot-wide reveal">
+          <img src="assets/servers.png" alt="Список публичных серверов Minecraft в MINE Launcher" width="1328" height="855" />
+          <figcaption>
+            Онлайн и версии обновляются автоматически. На сервере зарегистрируйтесь командой <code>/register</code>, затем входите через <code>/login</code>.
+          </figcaption>
+        </figure>
+      </section>
+
       <section class="section container" id="video">
         <div class="section-head">
           <p class="eyebrow">Видео</p>
-          <h2>Как это работает</h2>
-          <p class="section-sub">Полминуты: ник, версия, «Скачать и играть» — и ты в игре.</p>
+          <h2>Как скачать мод, сборку или шейдер</h2>
+          <p class="section-sub">Полторы минуты: установка из каталога лаунчера и скачивание тех же файлов с Modrinth в браузере.</p>
         </div>
 
         <figure class="video-card reveal">
@@ -316,7 +345,7 @@
             </div>
           </div>
           <figcaption>
-            1 — ник без аккаунта · 2 — выбор версии · 3 — «Скачать и играть» · 4 — игра запущена
+            1 — версия · 2 — моды · 3 — шейдеры · 4 — сборки · 5 — серверы · 6 — Modrinth в браузере
           </figcaption>
         </figure>
       </section>
@@ -331,7 +360,7 @@
           <li class="reveal">
             <span class="step-num">01</span>
             <h3>Скачай установщик</h3>
-            <p>Файл <code>MINE-Launcher-Setup-1.1.1.exe</code> (~103 МБ) с GitHub Releases. Права администратора не нужны.</p>
+            <p>Файл <code>MINE-Launcher-Setup-1.2.0.exe</code> (~103 МБ) с GitHub Releases. Права администратора не нужны.</p>
           </li>
           <li class="reveal">
             <span class="step-num">02</span>
@@ -354,7 +383,7 @@
         <div class="note note-alt">
           <strong>Не хочешь установщик?</strong> Есть portable-архив: распакуй в любую папку и запусти
           <code>MINE Launcher.exe</code>. Скачать:
-          <a href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.1.1-win64.zip">MINE-Launcher-1.1.1-win64.zip</a> (~140 МБ).
+          <a href="https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.2.0-win64.zip">MINE-Launcher-1.2.0-win64.zip</a> (~140 МБ).
         </div>
       </section>
 
@@ -371,7 +400,11 @@
           </details>
           <details class="reveal">
             <summary>Можно ли играть на серверах?</summary>
-            <p>На серверах, где включён <code>online-mode=false</code>, — да. На официальных серверах с проверкой лицензии офлайн-вход не подойдёт.</p>
+            <p>Да. В лаунчере есть список из 8 публичных серверов без лицензии — нажмите «Подключиться», и игра запустится с подключением к нему. На сервере зарегистрируйтесь: <code>/register пароль пароль</code>, затем <code>/login пароль</code>. На официальных серверах с проверкой лицензии офлайн-вход не подойдёт.</p>
+          </details>
+          <details class="reveal">
+            <summary>Как зайти на свой сервер?</summary>
+            <p>Откройте «Серверы» и внизу введите адрес вида <code>play.example.com</code> или <code>1.2.3.4:25565</code>. Лаунчер подключится на выбранной в библиотеке версии. Сервер должен быть в режиме <code>online-mode=false</code>.</p>
           </details>
           <details class="reveal">
             <summary>Откуда берутся моды в каталоге?</summary>

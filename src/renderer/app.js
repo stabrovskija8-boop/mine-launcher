@@ -24,7 +24,7 @@ const state = {
   refreshPromise: null,
   offline: false,
   consoleOpen: false,
-  appVersion: '1.1.1',
+  appVersion: '1.2.0',
   paths: {},
   settingsOpen: false,
   emptyAction: 'retry',
@@ -75,6 +75,13 @@ const state = {
     key: '',
     installed: new Set(),
   },
+  servers: {
+    open: false,
+    items: [],
+    loading: false,
+    token: 0,
+    connected: null,
+  },
 };
 
 const els = {};
@@ -121,6 +128,8 @@ function cacheElements() {
     'catalogQuery', 'catalogRefresh', 'catalogHint', 'catalogResults', 'catalogEmpty',
     'catalogStatus', 'catalogStatusTitle', 'catalogStatusText', 'catalogProgressBar',
     'catalogCancel', 'catalogMore',
+    'navServers', 'serversModal', 'closeServers', 'closeServersFoot', 'serversHint',
+    'serversRefresh', 'serversList', 'serverCustom', 'serverCustomPlay',
     'skinModal', 'closeSkin', 'skinCanvas', 'skinHover', 'skinColor', 'skinPalette',
     'skinUndo', 'skinRedo', 'skinBase', 'skinClear', 'skinImport', 'skinFile',
     'skinPreview', 'skinEnabled', 'skinExport', 'skinReset', 'skinStatus', 'skinSave',
@@ -990,13 +999,15 @@ function setFilter(filter) {
   renderVersions();
 }
 
-async function play() {
-  if (state.game.status === 'preparing' || state.game.status === 'running') return;
-  if (!NAME_RE.test(state.config?.username || '')) {
+async function startSession(options = {}) {
+  if (state.game.status === 'preparing' || state.game.status === 'running') return false;
+  const username = options.username || state.config?.username || '';
+  if (!NAME_RE.test(username)) {
     openSettings();
-    return;
+    return false;
   }
-  if (!state.selectedId || !state.details || state.detailsError) return;
+  const versionId = options.versionId || state.selectedId;
+  if (!versionId) return false;
 
   hideErrorBox();
   openConsole();
@@ -1005,15 +1016,24 @@ async function play() {
   updatePlayButton();
   updateStateStats();
   showSessionBox();
-  setSessionProgress(null, 'Проверка версии…', 'Подготовка…');
+  const serverLabel = options.server?.name || options.server?.address || '';
+  setSessionProgress(
+    null,
+    serverLabel ? `Подключение к ${serverLabel}…` : 'Проверка версии…',
+    'Подготовка…',
+  );
   setStatus('Подготовка…', 'busy');
   setConsoleDot('active');
 
   try {
     await api.play({
-      versionId: state.selectedId,
-      username: state.config.username,
+      versionId,
+      username,
+      server: options.server
+        ? { address: options.server.address, name: options.server.name }
+        : undefined,
     });
+    return true;
   } catch (error) {
     state.game.status = 'idle';
     resetSession();
@@ -1024,7 +1044,13 @@ async function play() {
     toast(message, 'error', 6500);
     updateStateStats();
     updatePlayButton();
+    return false;
   }
+}
+
+async function play() {
+  if (!state.selectedId || !state.details || state.detailsError) return;
+  return startSession({ versionId: state.selectedId });
 }
 
 async function cancelPreparation() {
@@ -2144,6 +2170,293 @@ function bindCatalogEvents() {
   });
 }
 
+/* ================================================================= Серверы */
+
+function compareVersionIds(a, b) {
+  const left = String(a).split('.').map((part) => Number(part) || 0);
+  const right = String(b).split('.').map((part) => Number(part) || 0);
+  const length = Math.max(left.length, right.length);
+  for (let index = 0; index < length; index += 1) {
+    const diff = (left[index] || 0) - (right[index] || 0);
+    if (diff) return diff;
+  }
+  return 0;
+}
+
+function serverSupportsVersion(version, server) {
+  if (!version) return false;
+  if (!server.minVersion || !server.maxVersion) return true;
+  return (
+    compareVersionIds(version, server.minVersion) >= 0 &&
+    compareVersionIds(version, server.maxVersion) <= 0
+  );
+}
+
+function manifestReleaseIds() {
+  const versions = state.manifest?.versions;
+  if (!Array.isArray(versions)) return [];
+  return versions.filter((item) => item.type === 'release').map((item) => item.id);
+}
+
+// Берём версию из библиотеки, если сервер её поддерживает.
+// Иначе — самую новую версию из диапазона сервера.
+function pickServerVersion(server) {
+  const selected = selectedGameVersion();
+  if (selected && serverSupportsVersion(selected, server)) return selected;
+  if (server.maxVersion) return server.maxVersion;
+  if (selected) return selected;
+  return state.manifest?.latest?.release || '';
+}
+
+function parseCustomAddress(value) {
+  const raw = String(value || '')
+    .trim()
+    .replace(/^[a-z]+:\/\//i, '')
+    .split('/')[0];
+  if (!raw) return null;
+  const match = raw.match(/^([a-z0-9][a-z0-9.-]*)(?::(\d{1,5}))?$/i);
+  if (!match) return null;
+  const host = match[1].toLowerCase();
+  const port = match[2] ? Number(match[2]) : 25565;
+  if (!host.includes('.') || port < 1 || port > 65535) return null;
+  return { host, port, address: `${host}:${port}` };
+}
+
+function serverAddressText(server) {
+  return server.port && Number(server.port) !== 25565
+    ? `${server.host}:${server.port}`
+    : server.host;
+}
+
+function formatPlayers(value) {
+  const count = Number(value);
+  return Number.isFinite(count) ? count.toLocaleString('ru-RU') : '0';
+}
+
+function serverStatusText(server) {
+  const status = server.status || {};
+  if (!status.online) return status.unknown ? 'нет данных' : 'офлайн';
+  const players = status.players;
+  if (!players) return 'онлайн';
+  return `${formatPlayers(players.online)} онлайн`;
+}
+
+function renderServers() {
+  if (!els.serversList) return;
+  els.serversList.replaceChildren();
+
+  if (state.servers.loading && !state.servers.items.length) {
+    const box = document.createElement('div');
+    box.className = 'servers-state';
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    const text = document.createElement('span');
+    text.textContent = 'Проверяем серверы…';
+    box.append(spinner, text);
+    els.serversList.appendChild(box);
+    return;
+  }
+
+  if (!state.servers.items.length) {
+    const box = document.createElement('div');
+    box.className = 'servers-state';
+    box.textContent = 'Список недоступен — проверьте интернет и нажмите «Обновить».';
+    els.serversList.appendChild(box);
+    return;
+  }
+
+  for (const server of state.servers.items) {
+    const status = server.status || {};
+    const online = Boolean(status.online);
+
+    const card = document.createElement('article');
+    card.className = 'server-card';
+    if (status.unknown) card.classList.add('is-offline');
+
+    const head = document.createElement('div');
+    head.className = 'server-card-head';
+
+    const title = document.createElement('div');
+    title.className = 'server-card-title';
+    const name = document.createElement('h3');
+    name.textContent = server.name;
+    const note = document.createElement('p');
+    note.textContent = server.note || 'Публичный сервер без лицензии.';
+    title.append(name, note);
+
+    const badge = document.createElement('span');
+    badge.className = `server-status ${online ? 'is-online' : 'is-offline'}`;
+    const dot = document.createElement('i');
+    const label = document.createElement('span');
+    label.textContent = serverStatusText(server);
+    badge.append(dot, label);
+
+    head.append(title, badge);
+    card.appendChild(head);
+
+    const meta = document.createElement('div');
+    meta.className = 'server-meta';
+
+    const address = document.createElement('span');
+    address.className = 'server-address';
+    address.textContent = serverAddressText(server);
+    address.title = 'Адрес сервера';
+    meta.appendChild(address);
+
+    const version = document.createElement('span');
+    version.className = 'server-version';
+    version.textContent = `Minecraft ${server.versions}`;
+    meta.appendChild(version);
+
+    for (const tag of server.tags || []) {
+      const chip = document.createElement('span');
+      chip.className = 'server-tag';
+      chip.textContent = tag;
+      meta.appendChild(chip);
+    }
+    card.appendChild(meta);
+
+    const foot = document.createElement('div');
+    foot.className = 'server-card-foot';
+
+    const players = document.createElement('span');
+    players.className = 'server-players';
+    if (online && status.players) {
+      players.textContent = `${formatPlayers(status.players.online)} из ${formatPlayers(
+        status.players.max,
+      )} игроков`;
+    } else {
+      players.textContent = status.unknown ? 'Статус недоступен' : 'Сервер сейчас офлайн';
+    }
+    foot.appendChild(players);
+
+    const connect = document.createElement('button');
+    connect.type = 'button';
+    connect.className = 'button-primary compact server-connect';
+    connect.textContent = online || status.unknown ? 'Подключиться' : 'Офлайн';
+    connect.disabled = !online && !status.unknown;
+    connect.addEventListener('click', () => connectToServer(server));
+    foot.appendChild(connect);
+
+    card.appendChild(foot);
+    els.serversList.appendChild(card);
+  }
+}
+
+async function loadServers(force = false) {
+  if (state.servers.loading) return;
+  if (!force && state.servers.items.length) {
+    renderServers();
+    return;
+  }
+
+  state.servers.loading = true;
+  const token = ++state.servers.token;
+  els.serversRefresh.disabled = true;
+  els.serversHint.textContent = 'Проверяем серверы…';
+  renderServers();
+
+  try {
+    const items = await api.servers();
+    if (token !== state.servers.token) return;
+    state.servers.items = Array.isArray(items) ? items : [];
+    const online = state.servers.items.filter((item) => item.status?.online).length;
+    els.serversHint.textContent = `${state.servers.items.length} серверов · ${online} онлайн`;
+  } catch (error) {
+    if (token !== state.servers.token) return;
+    state.servers.items = [];
+    els.serversHint.textContent = 'Не удалось получить список';
+    toast(cleanError(error), 'error', 5000);
+  } finally {
+    if (token === state.servers.token) {
+      state.servers.loading = false;
+      els.serversRefresh.disabled = false;
+      renderServers();
+    }
+  }
+}
+
+function openServers() {
+  if (state.game.status === 'preparing' || state.game.status === 'running') {
+    toast('Дождитесь завершения игры или подготовки.', 'warn');
+    return;
+  }
+  state.servers.open = true;
+  els.serversModal.classList.remove('hidden');
+  loadServers(true);
+}
+
+function closeServers() {
+  state.servers.open = false;
+  els.serversModal.classList.add('hidden');
+}
+
+async function connectToServer(server) {
+  if (state.game.status === 'preparing' || state.game.status === 'running') {
+    toast('Игра уже запускается или запущена.', 'warn');
+    return;
+  }
+  if (!NAME_RE.test(state.config?.username || '')) {
+    closeServers();
+    openSettings();
+    return;
+  }
+  const versionId = pickServerVersion(server);
+  if (!versionId) {
+    toast('Выберите версию в библиотеке — лаунчер подключится на ней.', 'warn');
+    return;
+  }
+
+  const address = `${server.host}:${server.port || 25565}`;
+  closeServers();
+  await startSession({
+    versionId,
+    server: { address, name: server.name },
+  });
+}
+
+async function connectToCustomServer() {
+  const parsed = parseCustomAddress(els.serverCustom.value);
+  if (!parsed) {
+    toast('Введите адрес вида play.example.com или 1.2.3.4:25565.', 'warn', 4200);
+    els.serverCustom.focus();
+    return;
+  }
+  if (!NAME_RE.test(state.config?.username || '')) {
+    closeServers();
+    openSettings();
+    return;
+  }
+  const versionId = pickServerVersion({ minVersion: '', maxVersion: '' });
+  if (!versionId) {
+    toast('Выберите версию в библиотеке.', 'warn');
+    return;
+  }
+
+  closeServers();
+  await startSession({
+    versionId,
+    server: { address: parsed.address, name: parsed.host },
+  });
+}
+
+function bindServerEvents() {
+  els.navServers.addEventListener('click', openServers);
+  els.closeServers.addEventListener('click', closeServers);
+  els.closeServersFoot.addEventListener('click', closeServers);
+  els.serversModal.addEventListener('click', (event) => {
+    if (event.target === els.serversModal) closeServers();
+  });
+  els.serversRefresh.addEventListener('click', () => loadServers(true));
+  els.serverCustomPlay.addEventListener('click', connectToCustomServer);
+  els.serverCustom.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      connectToCustomServer();
+    }
+  });
+}
+
 /* ==================================================================== Скин */
 
 const SKIN_SIZE = 64;
@@ -2865,6 +3178,7 @@ function bindEvents() {
   bindSkinEvents();
   bindLoaderEvents();
   bindCatalogEvents();
+  bindServerEvents();
 
   for (const trigger of document.querySelectorAll('[data-open-settings]')) {
     trigger.addEventListener('click', openSettings);
@@ -2979,6 +3293,10 @@ function bindEvents() {
         closeCatalog();
         return;
       }
+      if (state.servers.open) {
+        closeServers();
+        return;
+      }
       if (state.loaders.open) {
         closeLoaders();
         return;
@@ -2989,7 +3307,7 @@ function bindEvents() {
       }
     }
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-      if (state.settingsOpen || state.loaders.open || state.skinOpen || state.catalog.open) return;
+      if (state.settingsOpen || state.loaders.open || state.skinOpen || state.catalog.open || state.servers.open) return;
       event.preventDefault();
       els.search.focus();
       els.search.select();
@@ -3000,7 +3318,8 @@ function bindEvents() {
       !state.settingsOpen &&
       !state.loaders.open &&
       !state.skinOpen &&
-      !state.catalog.open
+      !state.catalog.open &&
+      !state.servers.open
     ) {
       const active = document.activeElement;
       const typing =

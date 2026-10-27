@@ -2918,6 +2918,249 @@ input:focus-visible {
   margin: 14px auto 4px;
 }
 
+/* ------------------------------------------------------------- Серверы */
+
+.servers-body {
+  padding-top: 14px;
+}
+
+.servers-note {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border: 1px solid rgba(100, 221, 135, 0.18);
+  border-radius: 10px;
+  background: var(--green-soft);
+  color: var(--text-soft);
+  font-size: 10.5px;
+  line-height: 1.55;
+}
+
+.servers-note b {
+  flex: 0 0 auto;
+  color: #a6f0bc;
+  font-size: 10.5px;
+}
+
+.servers-note code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.28);
+  color: #cfefd8;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  white-space: nowrap;
+}
+
+.servers-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 12px 0 8px;
+}
+
+.servers-hint {
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.servers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.servers-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 34px 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.server-card {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px 14px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.018);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.server-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.server-card.is-offline {
+  opacity: 0.74;
+}
+
+.server-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.server-card-title {
+  min-width: 0;
+}
+
+.server-card-title h3 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.server-card-title p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+.server-status {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 9.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.server-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.server-status.is-online {
+  background: var(--green-soft);
+  color: #a6f0bc;
+}
+
+.server-status.is-offline {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+}
+
+.server-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.server-address {
+  padding: 2px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--text-soft);
+  font-family: var(--mono);
+  font-size: 9.5px;
+}
+
+.server-version {
+  padding: 2px 7px;
+  border: 1px solid rgba(119, 183, 255, 0.22);
+  border-radius: 5px;
+  background: var(--blue-soft);
+  color: #a9cffb;
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.server-tag {
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--muted);
+  font-size: 9.5px;
+}
+
+.server-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 1px;
+}
+
+.server-players {
+  color: var(--dim);
+  font-size: 9.5px;
+}
+
+.server-connect {
+  min-width: 120px;
+}
+
+.servers-custom {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.servers-custom-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.servers-custom-head b {
+  font-size: 11.5px;
+}
+
+.servers-custom-head span {
+  color: var(--muted);
+  font-size: 9.5px;
+}
+
+.servers-custom-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.servers-custom-row input {
+  flex: 1;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: 0;
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 11px;
+  user-select: text;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.servers-custom-row input:focus {
+  border-color: rgba(100, 221, 135, 0.38);
+  background: rgba(100, 221, 135, 0.03);
+}
+
+.servers-custom-row .button-primary {
+  flex: 0 0 auto;
+  height: 34px;
+}
+
 /* ------------------------------------------------------- Галерея скинов */
 
 .skin-gallery {

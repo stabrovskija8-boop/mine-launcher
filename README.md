@@ -2,19 +2,23 @@
 
 Офлайн-лаунчер Minecraft для Windows: сам скачивает нужную версию, библиотеки, ресурсы и Java, а запускает игру по обычному нику — без аккаунта Mojang/Microsoft.
 
-[Сайт лаунчера](https://stabrovskija8-boop.github.io/mine-launcher/) · [Установщик](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.1.1.exe) · [Portable-архив](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.1.1-win64.zip) · [Репозиторий](https://github.com/stabrovskija8-boop/mine-launcher)
+[Сайт лаунчера](https://stabrovskija8-boop.github.io/mine-launcher/) · [Установщик](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-Setup-1.2.0.exe) · [Portable-архив](https://github.com/stabrovskija8-boop/mine-launcher/releases/latest/download/MINE-Launcher-1.2.0-win64.zip) · [Репозиторий](https://github.com/stabrovskija8-boop/mine-launcher)
 
 ![MINE Launcher](docs/assets/launcher.png)
+
+Список серверов и каталог модов:
+
+![Серверы в MINE Launcher](docs/assets/servers.png)
 
 ## Скачать
 
 | Файл | Размер | Что это |
 | --- | --- | --- |
-| `MINE-Launcher-Setup-1.1.1.exe` | ~103 МБ | Установщик: ярлыки в «Пуск» и на рабочем столе, удаление через «Приложения». Права администратора не нужны. |
-| `MINE-Launcher-1.1.1-win64.zip` | ~140 МБ | Portable: распаковать в любую папку и запустить `MINE Launcher.exe`. |
+| `MINE-Launcher-Setup-1.2.0.exe` | ~103 МБ | Установщик: ярлыки в «Пуск» и на рабочем столе, удаление через «Приложения». Права администратора не нужны. |
+| `MINE-Launcher-1.2.0-win64.zip` | ~140 МБ | Portable: распаковать в любую папку и запустить `MINE Launcher.exe`. |
 
-SHA-256 установщика: `117ef2a14b00aa6554ecdad9d70fa587aee77694819064d507c28c86ea858690`
-SHA-256 portable-архива: `ec94b17948c448a01dc149d6585f708d15abdba31acc244380e16026621acdd2`
+SHA-256 установщика: `e85856223765b9c3bde129ac077014e8db159e84be6dae1b72e5b49f872224c9`
+SHA-256 portable-архива: `cdafd87df96e3f29da9d8d400f02777e02ebef4e0004d4390e1010f02d3a4718`
 
 Сборка не подписана, поэтому SmartScreen может предупредить: «Подробнее» → «Выполнить в любом случае».
 
@@ -39,6 +43,7 @@ SHA-256 portable-архива: `ec94b17948c448a01dc149d6585f708d15abdba31acc2443
 - Поддержка современных и старых версий: `arguments` и `minecraftArguments`, правила ОС, нативы, virtual assets, `inheritsFrom`.
 - **Модификации**: установка Fabric, Quilt, Forge, NeoForge прямо из лаунчера и OptiFine через официальный установщик. Установленная версия сразу появляется в библиотеке.
 - **Каталог Modrinth**: поиск модов, шейдеров и готовых сборок под выбранную версию и загрузчик. На каждой карточке видно, под какие версии Minecraft подходит проект: свежие релизы сразу, полный список — по кнопке «+N». Файлы качаются по клику прямо в папку игры, обязательные зависимости модов подтягиваются автоматически, сборки `.mrpack` устанавливаются целиком вместе с загрузчиком.
+- **Серверы**: список 8 публичных серверов без лицензии с онлайном, поддерживаемыми версиями и загрузкой. Кнопка «Подключиться» запускает игру с `--server` и сразу подключает к серверу; свой адрес можно ввести вручную.
 - **Редактор скина**: карандаш, ластик, заливка, пипетка, палитра, отмена/повтор, шаблон Стива, импорт и экспорт PNG. Скин применяется к персонажу при запуске через ресурспак.
 - **36 готовых скинов**: Стив, Алекс, Нотч, jeb_, Херобрин, Диннербон, Дрим, Техноблейд, Томми, Уилбур и другие. Выбираются в редакторе одним кликом — лаунчер сам скачивает PNG.
 - Прогресс скачивания, скорость, отмена, лог запуска прямо в окне.
@@ -64,7 +69,7 @@ SHA-256 portable-архива: `ec94b17948c448a01dc149d6585f708d15abdba31acc2443
 
 ## Ограничения
 
-- Это офлайн-режим: на серверы с `online-mode=true` зайти нельзя.
+- Это офлайн-режим: на серверы с `online-mode=true` зайти нельзя. Встроенный список — публичные серверы без лицензии; они не связаны с лаунчером, правила и регистрация — на стороне сервера.
 - Скин работает в одиночной игре и на офлайн-серверах (версии 1.6+). В альфах и бетах ресурспаков нет — там будет стандартный Стив.
 - Скорость скачивания зависит от соединения с серверами Mojang/Azul; при обрыве загрузка повторяется автоматически.
 - Forge/NeoForge/OptiFine устанавливаются официальными установщиками: для Forge и NeoForge загрузка библиотек идёт внутри установщика, для OptiFine нужно нажать «Install» в его окне.
@@ -79,4 +84,4 @@ SHA-256 portable-архива: `ec94b17948c448a01dc149d6585f708d15abdba31acc2443
 & "$env:LOCALAPPDATA\InnoSetup6\ISCC.exe" build\setup.iss
 ```
 
-На выходе — `dist\MINE-Launcher-Setup-1.1.1.exe`. Скрипт `build/setup.iss` берёт файлы из `dist\MINE Launcher`, а `build/icon.ico` и `build/wizard.png` — иконку приложения и картинку мастера установки.
+На выходе — `dist\MINE-Launcher-Setup-1.2.0.exe`. Скрипт `build/setup.iss` берёт файлы из `dist\MINE Launcher`, а `build/icon.ico` и `build/wizard.png` — иконку приложения и картинку мастера установки.

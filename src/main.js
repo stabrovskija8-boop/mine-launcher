@@ -27,6 +27,7 @@ const {
 const { loaderVersions, installLoader } = require('./core/loaders');
 const { getSkin, saveSkinFile, resetSkin } = require('./core/skin');
 const { searchProjects, installProject, installPack } = require('./core/catalog');
+const { listServers, parseServerAddress } = require('./core/servers');
 const { skinGallery, fetchSkinBuffer } = require('./core/gallery');
 const { USER_AGENT } = require('./core/util');
 
@@ -272,6 +273,8 @@ function registerIpc() {
 
   ipcMain.handle('versions:local', async () => listLocalVersions(paths));
 
+  ipcMain.handle('servers:list', async () => listServers());
+
   ipcMain.handle('version:info', async (_event, versionId) => {
     const id = validateVersionId(versionId);
     const info = await getVersionRuntimeInfo(id, { paths, config });
@@ -286,6 +289,13 @@ function registerIpc() {
     const username = sanitizeUsername(payload.username, '');
     if (!username) throw new Error('Никнейм должен содержать 2–16 символов: латиница, цифры или «_».');
 
+    let server = null;
+    if (payload.server) {
+      server = parseServerAddress(payload.server.address || '');
+      if (!server) throw new Error('Некорректный адрес сервера.');
+      server.name = String(payload.server.name || '').slice(0, 48);
+    }
+
     if (username !== config.username) {
       config.username = username;
       await saveConfig(paths.dataDir, config);
@@ -295,6 +305,7 @@ function registerIpc() {
     const session = {
       id: crypto.randomUUID(),
       versionId,
+      server,
       controller,
       exited: false,
       child: null,
@@ -304,13 +315,19 @@ function registerIpc() {
     stopping = false;
     openLogFile(versionId);
     pushLog('info', `=== Запуск ${versionId} · игрок ${username} ===`);
-    sendState({ status: 'preparing', versionId });
+    if (server) {
+      pushLog(
+        'info',
+        `Подключение к серверу ${server.name ? `«${server.name}» ` : ''}${server.host}:${server.port}.`,
+      );
+    }
+    sendState({ status: 'preparing', versionId, server: server ? `${server.host}:${server.port}` : null });
 
     runSession(session, username).catch((error) => {
       handleFatalSessionError(session, error);
     });
 
-    return { ok: true, username };
+    return { ok: true, username, server };
   });
 
   ipcMain.handle('game:cancel', async () => {
@@ -593,12 +610,13 @@ async function runCatalogInstall(payload, label, runner) {
 }
 
 async function runSession(session, username) {
-  const { versionId, controller } = session;
+  const { versionId, server, controller } = session;
   try {
     const result = await startGame(versionId, {
       paths,
       config,
       username,
+      server,
       signal: controller.signal,
       onSpawn: (child) => {
         if (session.exited) return;

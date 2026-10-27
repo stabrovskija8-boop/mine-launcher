@@ -81,6 +81,10 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z" /><path d="M4 9h16M9 9v10" /></svg>
             Каталог
           </button>
+          <button class="nav-item" type="button" id="navServers">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="18" height="6.5" rx="1.6" /><rect x="3" y="14" width="18" height="6.5" rx="1.6" /><path d="M7 6.75h.01M7 17.25h.01" /></svg>
+            Серверы
+          </button>
           <button class="nav-item" type="button" id="navSkin">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4" /><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" /><path d="M4 4h3M4 4v3M20 4h-3M20 4v3" /></svg>
             Скин
@@ -561,6 +565,50 @@
         <span class="modal-foot-note">Файлы качаются с Modrinth и кладутся в папку игры</span>
         <button class="button-ghost" id="catalogFolder" type="button">Папка модов</button>
         <button class="button-primary" id="closeCatalogFoot" type="button">Готово</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="serversModal">
+    <div class="modal modal-wide servers-modal" role="dialog" aria-modal="true" aria-labelledby="serversTitle">
+      <header class="modal-head">
+        <div>
+          <h2 id="serversTitle">Серверы</h2>
+          <p>Публичные серверы без лицензии — заходите по нику в один клик</p>
+        </div>
+        <button class="icon-button" id="closeServers" type="button" aria-label="Закрыть список серверов">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </header>
+
+      <div class="modal-body servers-body">
+        <div class="servers-note">
+          <b>Как зайти</b>
+          <span>Нажмите «Подключиться» — лаунчер запустит игру и сразу подключит к серверу. На сервере зарегистрируйтесь: <code>/register пароль пароль</code>, затем входите командой <code>/login пароль</code>.</span>
+        </div>
+
+        <div class="servers-toolbar">
+          <span class="servers-hint" id="serversHint">Загружаем список…</span>
+          <button class="link-button" id="serversRefresh" type="button">Обновить</button>
+        </div>
+
+        <div class="servers-list" id="serversList"></div>
+
+        <div class="servers-custom">
+          <div class="servers-custom-head">
+            <b>Свой сервер</b>
+            <span>Если сервера нет в списке — введите адрес</span>
+          </div>
+          <div class="servers-custom-row">
+            <input id="serverCustom" type="text" placeholder="play.example.com или 123.45.67.89:25565" autocomplete="off" spellcheck="false" />
+            <button class="button-primary compact" id="serverCustomPlay" type="button">Подключиться</button>
+          </div>
+        </div>
+      </div>
+
+      <footer class="modal-foot">
+        <span class="modal-foot-note">Версия — из библиотеки, при необходимости лаунчер её скачает</span>
+        <button class="button-primary" id="closeServersFoot" type="button">Готово</button>
       </footer>
     </div>
   </div>

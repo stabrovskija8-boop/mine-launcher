@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('launcher', {
   refreshManifest: (options) => ipcRenderer.invoke('manifest:refresh', options),
   getVersionInfo: (versionId) => ipcRenderer.invoke('version:info', versionId),
   localVersions: () => ipcRenderer.invoke('versions:local'),
+  servers: () => ipcRenderer.invoke('servers:list'),
   play: (payload) => ipcRenderer.invoke('game:play', payload),
   cancel: () => ipcRenderer.invoke('game:cancel'),
   stop: () => ipcRenderer.invoke('game:stop'),
