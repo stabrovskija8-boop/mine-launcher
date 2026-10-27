@@ -306,9 +306,11 @@
 
         <figure class="video-card reveal">
           <div class="video-frame" id="videoFrame">
+            <!-- Видео отдаём через jsDelivr: GitHub Pages в РФ режет скорость на больших
+                 файлах, и ролик замирал на первых секундах. При новом релизе менять тег
+                 @v1.2.0 на новый (кэш у jsDelivr годовой и неизменяемый). -->
             <video
               id="demoVideo"
-              src="assets/demo.mp4"
               poster="assets/demo-poster.jpg"
               width="1280"
               height="720"
@@ -316,7 +318,13 @@
               loop
               playsinline
               preload="metadata"
-            ></video>
+            >
+              <source
+                src="https://cdn.jsdelivr.net/gh/stabrovskija8-boop/mine-launcher@v1.2.0/docs/assets/demo.mp4"
+                type="video/mp4"
+              />
+              <source src="assets/demo.mp4" type="video/mp4" />
+            </video>
 
             <button class="video-toggle" id="videoToggle" type="button" aria-label="Пауза">
               <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true">
